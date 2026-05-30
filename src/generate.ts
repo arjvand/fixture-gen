@@ -1,6 +1,11 @@
-import { generateValue } from './generators'
+import {
+  type CustomGenerator,
+  createContext,
+  isValidCustomValue,
+  resolveCustomGenerator,
+} from './custom'
+import { generateBuiltinValue } from './generators'
 import { introspect } from './introspect'
-import { createPrng } from './prng'
 import type { InferOutput, StandardSchemaV1 } from './standard'
 
 export interface GenerateOptions<T = unknown> {
@@ -8,6 +13,10 @@ export interface GenerateOptions<T = unknown> {
   seed?: number
   /** Pin specific field values, bypassing generation. */
   overrides?: Partial<T>
+  /** Field-path keyed custom generators. `*` matches a single path segment. */
+  generators?: Record<string, CustomGenerator>
+  /** Schema-wide custom generator hook that can override any node. */
+  generator?: CustomGenerator
 }
 
 /** Generate a single fixture from a Standard Schema. */
@@ -23,12 +32,34 @@ export function generate(schema: object, options: GenerateOptions = {}): unknown
 
 function generateInternal(schema: object, options: GenerateOptions = {}): unknown {
   const node = introspect(schema)
-  const prng = createPrng(options.seed)
-  const value = generateValue(node, prng)
+  const seed = options.seed ?? 0
+  const value = generateNode(node, seed, [], options)
   if (options.overrides && typeof value === 'object' && value !== null && !Array.isArray(value)) {
     return { ...(value as Record<string, unknown>), ...options.overrides }
   }
   return value
+}
+
+function generateNode(
+  node: Parameters<typeof generateBuiltinValue>[0],
+  seed: number,
+  path: readonly string[],
+  options: GenerateOptions,
+): unknown {
+  const context = createContext(seed, path, node)
+  const fieldGenerator = resolveCustomGenerator(path, options.generators)
+  if (fieldGenerator) {
+    const custom = fieldGenerator(context)
+    if (isValidCustomValue(node, custom)) return custom
+  }
+  if (options.generator) {
+    const custom = options.generator(context)
+    if (isValidCustomValue(node, custom)) return custom
+  }
+
+  return generateBuiltinValue(node, seed, path, (child, childPath) =>
+    generateNode(child, seed, childPath, options),
+  )
 }
 
 /** Generate an array of `count` fixtures, each with a distinct derived seed. */

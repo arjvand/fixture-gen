@@ -16,11 +16,11 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🟢 Done |
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🟢 Done |
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🟢 Done |
-| [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🔵 Planned |
+| [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🟡 In progress |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-Current branch status: phases 0-5 are implemented in `src/` and covered by tests/smoke checks. Phase 6 is the next open implementation track.
+Current branch status: phases 0-5 are implemented in `src/` and covered by tests/smoke checks. Phase 6 is now in progress with DX/docs, custom generators, examples, and release workflow work landed.
 
 ---
 
@@ -157,10 +157,10 @@ Current branch status: phases 0-5 are implemented in `src/` and covered by tests
 
 **Deliverables:** API docs, examples, custom field generators, release workflow, and a published package.
 
-- [ ] TSDoc on the public API; generate API reference
-- [ ] Runnable examples (per validator + relational)
-- [ ] Custom field generators (the README FAQ roadmap item)
-- [ ] Set up Changesets / release automation
+- [x] TSDoc on the public API; generate API reference
+- [x] Runnable examples (per validator + relational)
+- [x] Custom field generators (the README FAQ roadmap item)
+- [x] Set up release workflow
 - [ ] Wire up real README badges (npm, CI, bundle size)
 - [ ] Publish `1.0.0` to npm
 

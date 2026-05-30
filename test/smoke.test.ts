@@ -3,6 +3,6 @@ import { VERSION } from '../src/index'
 
 describe('package skeleton', () => {
   it('exposes a VERSION export', () => {
-    expect(VERSION).toBe('0.0.0')
+    expect(VERSION).toBe('1.0.0')
   })
 })

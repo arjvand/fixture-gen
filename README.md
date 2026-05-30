@@ -2,7 +2,7 @@
 
 > Schema-agnostic, deterministic test fixtures for any [Standard Schema](https://standardschema.dev) validator — Zod, Valibot, ArkType, TypeBox, and more.
 
-<!-- Placeholder badges — wire these up after the first publish. -->
+<!-- CI badge needs the final GitHub repo slug; npm and bundle-size badges are live. -->
 [![npm version](https://img.shields.io/npm/v/fixture-gen.svg)](https://www.npmjs.com/package/fixture-gen)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/fixture-gen)](https://bundlephobia.com/package/fixture-gen)
 [![CI](https://img.shields.io/github/actions/workflow/status/your-org/fixture-gen/ci.yml)](https://github.com/your-org/fixture-gen/actions)
@@ -17,6 +17,7 @@ The [Standard Schema](https://standardschema.dev) initiative unified the validat
 - **🔌 Standard Schema native** — works with Zod, Valibot, and ArkType through the shared `~standard` interface, and understands TypeBox schemas directly. No adapter code for *you* to write — point it at your existing schemas.
 - **🎲 Seeded determinism** — pass a `seed` and the same schema always produces the same data, so snapshots and assertions stay stable across runs and machines.
 - **🔗 Relational generation** — generate connected record sets where child rows reference real parent keys (matching foreign keys across tables).
+- **🧰 Custom generators** — pin exact fields with `overrides`, or compute field and schema-wide values with deterministic hooks.
 - **🪶 Minimal runtime** — pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge runtimes.
 - **🧩 Fully typed** — output is inferred from your schema, so fixtures match the types you already validate against.
 
@@ -111,6 +112,21 @@ const admin = generate(User, {
 })
 ```
 
+Use custom generators when a field needs a computed value instead of a fixed one:
+
+```ts
+const user = generate(User, {
+  seed: 42,
+  generators: {
+    'profile.slug': ({ prng }) => `slug-${prng.string(6)}`,
+  },
+  generator: ({ node, pathKey }) => {
+    if (node.kind === 'string' && pathKey === 'tag') return 'schema-wide'
+    return undefined
+  },
+})
+```
+
 ## Relational generation
 
 `generateRelational` builds multiple record sets at once and wires child records to **real** parent keys, so foreign keys actually resolve:
@@ -145,6 +161,8 @@ const { users, posts } = generateRelational(
 ```
 
 ## API
+
+Full reference: [docs/API.md](./docs/API.md)
 
 ### `generate(schema, options?)`
 
@@ -183,9 +201,23 @@ function generateRelational<S extends Record<string, StandardSchemaV1>>(
 interface GenerateOptions<T> {
   /** Seed for deterministic output. Same seed → same data. */
   seed?: number
-  /** Force specific field values, bypassing generation. */
+  /** Force specific top-level field values, bypassing generation. */
   overrides?: Partial<T>
+  /** Field-path keyed custom generators. `*` matches one path segment. */
+  generators?: Record<string, CustomGenerator>
+  /** Schema-wide hook that can override any node. */
+  generator?: CustomGenerator
 }
+
+interface GenerateContext {
+  path: readonly string[]
+  pathKey: string
+  node: IntrospectedNode
+  seed: number
+  prng: Prng
+}
+
+type CustomGenerator = (context: GenerateContext) => unknown
 
 interface RelationalOptions<S> {
   seed?: number
@@ -214,7 +246,7 @@ Node.js · Bun · Deno · edge runtimes (Cloudflare Workers, Vercel Edge, etc.).
 ## FAQ
 
 **Does it support custom field generators?**
-Yes — use `overrides` to pin individual fields to fixed or computed values. Schema-wide custom generators are on the roadmap.
+Yes — use `overrides` for fixed top-level values, `generators` for field-path keyed computed values, and `generator` for schema-wide hooks.
 
 **How does it pick realistic values?**
 It inspects the schema's type and constraints (formats like `uuid`/`email`, `min`/`max`, length, enums, patterns) and generates values that satisfy them — seeded so they stay reproducible.

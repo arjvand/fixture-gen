@@ -1,6 +1,6 @@
 {
   "name": "fixture-gen",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Schema-agnostic, deterministic test fixtures for any Standard Schema validator.",
   "type": "module",
   "license": "MIT",
@@ -30,6 +30,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
+    "docs:api": "node scripts/generate-api.mjs",
     "size": "size-limit",
     "check": "npm run lint && npm run typecheck && npm run build && npm run size && npm run test:runtime && npm test"
   },

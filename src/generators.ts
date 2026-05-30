@@ -1,10 +1,18 @@
+import { deriveSeed } from './hash'
 import type { IntrospectedNode } from './introspect'
-import type { Prng } from './prng'
+import { type Prng, createPrng } from './prng'
 
 const DATE_ANCHOR = 946684800000
 const DATE_SPREAD = 315360000000
 
-export function generateValue(node: IntrospectedNode, prng: Prng): unknown {
+export function generateBuiltinValue(
+  node: IntrospectedNode,
+  seed: number,
+  path: readonly string[],
+  generateChild: (node: IntrospectedNode, path: readonly string[]) => unknown,
+): unknown {
+  const prng = createPrng(deriveSeed(seed, path.join('.')))
+
   switch (node.kind) {
     case 'string':
       return generateString(node.constraints, prng)
@@ -20,7 +28,7 @@ export function generateValue(node: IntrospectedNode, prng: Prng): unknown {
       const result: Record<string, unknown> = {}
       for (const key of Object.keys(node.entries)) {
         const child = node.entries[key]
-        if (child) result[key] = generateValue(child, prng)
+        if (child) result[key] = generateChild(child, [...path, key])
       }
       return result
     }
@@ -28,13 +36,17 @@ export function generateValue(node: IntrospectedNode, prng: Prng): unknown {
       const min = node.constraints?.minLength ?? 1
       const max = node.constraints?.maxLength ?? Math.max(min, 3)
       const length = prng.int(min, max)
-      return Array.from({ length }, () => generateValue(node.element, prng))
+      return Array.from({ length }, (_, index) =>
+        generateChild(node.element, [...path, String(index)]),
+      )
     }
     case 'tuple': {
-      const values = node.elements.map((el) => generateValue(el, prng))
+      const values = node.elements.map((el, index) => generateChild(el, [...path, String(index)]))
       if (node.rest) {
         const extra = prng.int(0, 2)
-        for (let i = 0; i < extra; i++) values.push(generateValue(node.rest, prng))
+        for (let i = 0; i < extra; i++) {
+          values.push(generateChild(node.rest, [...path, String(node.elements.length + i)]))
+        }
       }
       return values
     }
@@ -42,8 +54,8 @@ export function generateValue(node: IntrospectedNode, prng: Prng): unknown {
       const count = prng.int(1, 3)
       const result: Record<string, unknown> = {}
       for (let i = 0; i < count; i++) {
-        const key = String(generateValue(node.key, prng))
-        result[key] = generateValue(node.value, prng)
+        const key = String(generateChild(node.key, [...path, '$key', String(i)]))
+        result[key] = generateChild(node.value, [...path, '$value', key])
       }
       return result
     }
@@ -51,9 +63,9 @@ export function generateValue(node: IntrospectedNode, prng: Prng): unknown {
     case 'nullable':
     case 'default':
     case 'catch':
-      return generateValue(node.inner, prng)
+      return generateChild(node.inner, path)
     case 'union':
-      return generateValue(prng.pick(node.members), prng)
+      return generateChild(prng.pick(node.members), path)
     case 'enum':
       return prng.pick(node.values)
     case 'literal':
