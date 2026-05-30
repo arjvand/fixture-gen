@@ -39,6 +39,8 @@ export type IntrospectedNode =
   | { kind: 'union'; members: IntrospectedNode[] }
   | { kind: 'enum'; values: Array<string | number | boolean> }
   | { kind: 'literal'; value: unknown }
+  | { kind: 'null' }
+  | { kind: 'any' }
   | { kind: 'unknown' }
 
 const isObject = (value: unknown): value is Record<string, unknown> =>

@@ -140,6 +140,13 @@ function fromV4(schema: ZodV4): IntrospectedNode {
       const vals = Array.isArray(def.values) ? def.values : []
       return { kind: 'literal', value: vals[0] }
     }
+    case 'null':
+      return { kind: 'null' }
+    case 'undefined':
+      return { kind: 'literal', value: undefined }
+    case 'any':
+    case 'unknown':
+      return { kind: 'any' }
     default:
       return { kind: 'unknown' }
   }
@@ -280,6 +287,13 @@ function fromV3(schema: ZodV3): IntrospectedNode {
     }
     case 'ZodLiteral':
       return { kind: 'literal', value: def.value }
+    case 'ZodNull':
+      return { kind: 'null' }
+    case 'ZodUndefined':
+      return { kind: 'literal', value: undefined }
+    case 'ZodAny':
+    case 'ZodUnknown':
+      return { kind: 'any' }
     default:
       return { kind: 'unknown' }
   }

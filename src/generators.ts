@@ -70,6 +70,10 @@ export function generateBuiltinValue(
       return prng.pick(node.values)
     case 'literal':
       return node.value
+    case 'null':
+      return null
+    case 'any':
+      return 'fixture'
     default:
       return undefined
   }
