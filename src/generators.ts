@@ -10,6 +10,7 @@ export function generateBuiltinValue(
   seed: number,
   path: readonly string[],
   generateChild: (node: IntrospectedNode, path: readonly string[]) => unknown,
+  scenario?: string,
 ): unknown {
   const prng = createPrng(deriveSeed(seed, path.join('.')))
 

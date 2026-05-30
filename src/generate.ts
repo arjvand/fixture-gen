@@ -60,8 +60,12 @@ function generateNode(
     if (isValidCustomValue(node, custom)) return custom
   }
 
-  return generateBuiltinValue(node, seed, path, (child, childPath) =>
-    generateNode(child, seed, childPath, options),
+  return generateBuiltinValue(
+    node,
+    seed,
+    path,
+    (child, childPath) => generateNode(child, seed, childPath, options),
+    options.scenario,
   )
 }
 
