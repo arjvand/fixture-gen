@@ -14,11 +14,14 @@ trap cleanup EXIT
 mkdir -p "$consumer_dir/node_modules"
 ln -sfn "$repo_root" "$consumer_dir/node_modules/fixture-gen"
 
-cat >"$consumer_dir/package.json" <<'EOF'
+cat >"$consumer_dir/package.json" <<EOF
 {
   "name": "fixture-gen-runtime-smoke",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "fixture-gen": "file:${repo_root}"
+  }
 }
 EOF
 
