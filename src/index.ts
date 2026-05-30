@@ -2,9 +2,14 @@
  * fixture-gen — schema-agnostic, deterministic test fixtures for any
  * Standard Schema validator.
  *
- * Phase 0 ships only the project skeleton. The public API
- * (`generate`, `generateMany`, `generateRelational`) lands in Phase 1+.
+ * Phase 1 ships the deterministic core: `generate()` over the Standard Schema
+ * interface for primitives and flat objects. `generateMany` /
+ * `generateRelational` and richer type/constraint coverage land in later phases.
  */
 
-/** Package version marker. Replaced by the real public API in Phase 1. */
+export { generate } from './generate'
+export type { GenerateOptions } from './generate'
+export type { InferOutput, StandardSchemaV1 } from './standard'
+
+/** Package version marker. */
 export const VERSION = '0.0.0'

@@ -11,7 +11,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | Phase | Goal | Status |
 | :--- | :--- | :--- |
 | [0 — Scaffolding](#phase-0--project-scaffolding) | Buildable, testable, CI-backed repo | 🟢 Done |
-| [1 — Core engine](#phase-1--core-engine--standard-schema-introspection) | Seeded `generate()` over Standard Schema | 🔵 Planned |
+| [1 — Core engine](#phase-1--core-engine--standard-schema-introspection) | Seeded `generate()` over Standard Schema | 🟢 Done |
 | [2 — Type coverage](#phase-2--rich-type--constraint-coverage) | Full type & constraint support | 🔵 Planned |
 | [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🔵 Planned |
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🔵 Planned |
@@ -51,15 +51,17 @@ Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
 **Deliverables:** Standard Schema introspection layer, a seeded PRNG, primitive value generators, and the `generate()` MVP.
 
-- [ ] Define internal types around the `~standard` (`StandardSchemaV1`) interface
-- [ ] Implement a deterministic seeded PRNG (e.g. mulberry32/xorshift) — same seed ⇒ same stream
-- [ ] Implement a schema walker that resolves node kind + constraints
-- [ ] Primitive generators: string, number, integer, boolean, date
-- [ ] Flat object generation
-- [ ] Public `generate(schema, options?)` with `{ seed }`
-- [ ] Validate generated output via `schema['~standard'].validate` in tests
+- [x] Define internal types around the `~standard` (`StandardSchemaV1`) interface
+- [x] Implement a deterministic seeded PRNG (e.g. mulberry32/xorshift) — same seed ⇒ same stream
+- [x] Implement a schema walker that resolves node kind + constraints
+- [x] Primitive generators: string, number, integer, boolean, date
+- [x] Flat object generation
+- [x] Public `generate(schema, options?)` with `{ seed }`
+- [x] Validate generated output via `schema['~standard'].validate` in tests
 
 **Exit criteria:** `generate(schema)` output passes the schema's own validation for primitives and flat objects; identical `seed` produces identical output.
+
+> **Note:** the `~standard` interface exposes no runtime schema structure, so introspection reads validator internals via a centralized `~standard.vendor`-keyed layer (Zod implemented; others land in Phase 3) with a placeholder fallback for unknown vendors. See the introspection note in [`CLAUDE.md`](../CLAUDE.md).
 
 ---
 

@@ -14,7 +14,7 @@ The [Standard Schema](https://standardschema.dev) initiative unified the validat
 
 ## Features
 
-- **🔌 Standard Schema native** — works with Zod, Valibot, ArkType, TypeBox, and any compliant validator through the shared `~standard` interface. No custom adapter code.
+- **🔌 Standard Schema native** — works with Zod, Valibot, ArkType, TypeBox, and any compliant validator through the shared `~standard` interface. No adapter code for *you* to write — point it at your existing schemas.
 - **🎲 Seeded determinism** — pass a `seed` and the same schema always produces the same data, so snapshots and assertions stay stable across runs and machines.
 - **🔗 Relational generation** — generate connected record sets where child rows reference real parent keys (matching foreign keys across tables).
 - **🪶 Minimal runtime** — pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge runtimes.
