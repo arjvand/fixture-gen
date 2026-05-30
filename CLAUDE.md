@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **Introspection reality:** the `~standard` interface carries *no schema structure* at runtime (only `vendor`/`validate`/type-level `types`). Structure is recovered by a centralized, **`~standard.vendor`-keyed** introspection layer that reads each validator's internals (validators stay devDeps only). Unknown vendors / opaque nodes fall back to a constraint-satisfying placeholder verified via `~standard.validate`.
 
-**Current state: Phase 1 (core engine).** `generate(schema, { seed })` produces deterministic, validating output for primitives and flat objects (Zod introspection; other vendors fall back). `generateMany` / `generateRelational` and richer type/constraint coverage land in later phases. The intended full API is specified in `README.md`, and the ordered build plan in `docs/ROADMAP.md`. **Read `docs/ROADMAP.md` before starting feature work** — pick up the lowest open phase, and keep its status table/checkboxes in sync as work lands.
+**Current state: Phase 3 (cross-validator compatibility).** `generate(schema, { seed })` produces deterministic, validating output for the supported validator matrix: Zod, Valibot, ArkType, and TypeBox. `generateMany` is also covered; `generateRelational` still lands in a later phase. The intended full API is specified in `README.md`, and the ordered build plan in `docs/ROADMAP.md`. **Read `docs/ROADMAP.md` before starting feature work** — pick up the lowest open phase, and keep its status table/checkboxes in sync as work lands.
 
 ## Commands
 
@@ -33,7 +33,7 @@ Tests live in `test/**/*.test.ts` or `src/**/*.test.ts`. Vitest globals are **of
 
 The library is built bottom-up over the Standard Schema interface; planned core components (Phase 1+):
 
-- **Standard Schema introspection** (`src/standard.ts`, `src/introspect/`) — internal `~standard` types plus a `vendor`-keyed walker that resolves each node's kind + constraints from the validator's internals (Zod implemented in `src/introspect/zod.ts`; others plug in later). The public API takes any `~standard` schema, so it stays validator-agnostic; output is verified by round-tripping through `schema['~standard'].validate` in tests. Unknown vendors / opaque nodes resolve to `{ kind: 'unknown' }` and a placeholder.
+- **Standard Schema introspection** (`src/standard.ts`, `src/introspect/`) — internal `~standard` types plus a `vendor`-keyed walker that resolves each node's kind + constraints from the validator's internals (Zod, Valibot, and ArkType via `~standard`; TypeBox is read directly from its JSON Schema shape). The public API stays validator-agnostic for Standard Schema validators, and output is verified by round-tripping through each library's runtime validator in tests. Unknown vendors / opaque nodes resolve to `{ kind: 'unknown' }` and a placeholder.
 - **Seeded PRNG** (mulberry32/xorshift) — the determinism foundation. Same seed ⇒ same value stream. All randomness must route through it; never call `Math.random()` in library code.
 - **Value generators** — primitive generators (string/number/integer/boolean/date), then composites (objects/arrays/tuples/records), modifiers (optional/nullable/default), unions/enums/literals, and constraint/format-aware values (min/max, length, regex, uuid/email/url/…).
 - **Public entry points** — `generate(schema, opts)`, `generateMany(schema, count, opts)`, and `generateRelational(schemas, { counts, relations, seed })` which generates parents first then assigns child foreign keys from real parent keys.

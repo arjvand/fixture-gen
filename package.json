@@ -18,11 +18,15 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
+    "test:unit": "vitest run --exclude test/cross-validator.test.ts",
+    "test:compat": "vitest run test/cross-validator.test.ts",
     "test:watch": "vitest",
     "lint": "biome check .",
     "format": "biome format --write .",
@@ -31,8 +35,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@sinclair/typebox": "^0.34.49",
+    "arktype": "^2.2.0",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
+    "valibot": "^1.4.1",
     "vitest": "^2.1.8",
     "zod": "^4.4.3"
   }

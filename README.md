@@ -14,7 +14,7 @@ The [Standard Schema](https://standardschema.dev) initiative unified the validat
 
 ## Features
 
-- **🔌 Standard Schema native** — works with Zod, Valibot, ArkType, TypeBox, and any compliant validator through the shared `~standard` interface. No adapter code for *you* to write — point it at your existing schemas.
+- **🔌 Standard Schema native** — works with Zod, Valibot, and ArkType through the shared `~standard` interface, and understands TypeBox schemas directly. No adapter code for *you* to write — point it at your existing schemas.
 - **🎲 Seeded determinism** — pass a `seed` and the same schema always produces the same data, so snapshots and assertions stay stable across runs and machines.
 - **🔗 Relational generation** — generate connected record sets where child rows reference real parent keys (matching foreign keys across tables).
 - **🪶 Minimal runtime** — pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge runtimes.
@@ -221,6 +221,9 @@ It inspects the schema's type and constraints (formats like `uuid`/`email`, `min
 
 **What happens with a schema type it doesn't understand?**
 Unsupported or opaque types fall back to a constraint-satisfying placeholder. You can always pin those fields with `overrides`, and unknown formats surface a warning so they're easy to spot.
+
+**What about TypeBox formats?**
+TypeBox schemas work directly, but its runtime checker only validates registered formats. If you use `format: "uuid"` or similar, register the matching predicate in TypeBox's `FormatRegistry` before validating generated values.
 
 **Will generated data pass my validator?**
 That's the goal: output is produced to satisfy the same schema you validate against, so `schema.parse(generate(schema))` succeeds.

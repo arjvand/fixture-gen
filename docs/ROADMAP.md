@@ -13,7 +13,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [0 — Scaffolding](#phase-0--project-scaffolding) | Buildable, testable, CI-backed repo | 🟢 Done |
 | [1 — Core engine](#phase-1--core-engine--standard-schema-introspection) | Seeded `generate()` over Standard Schema | 🟢 Done |
 | [2 — Type coverage](#phase-2--rich-type--constraint-coverage) | Full type & constraint support | 🟢 Done |
-| [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🔵 Planned |
+| [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🟢 Done |
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🔵 Planned |
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🔵 Planned |
 | [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🔵 Planned |
@@ -94,15 +94,17 @@ Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
 **Deliverables:** A shared conformance suite executed against each validator, plus documented caveats.
 
-- [ ] Author one conformance test suite parameterized by validator
-- [ ] Run it against **Zod**
-- [ ] Run it against **Valibot**
-- [ ] Run it against **ArkType**
-- [ ] Run it against **TypeBox**
-- [ ] CI matrix across all four
-- [ ] Document any per-library limitations / unsupported nodes
+- [x] Author one conformance test suite parameterized by validator
+- [x] Run it against **Zod**
+- [x] Run it against **Valibot**
+- [x] Run it against **ArkType**
+- [x] Run it against **TypeBox**
+- [x] CI matrix across all four
+- [x] Document any per-library limitations / unsupported nodes
 
 **Exit criteria:** The same fixtures validate across all four libraries in CI; caveats documented.
+
+> **Caveat:** TypeBox schemas are supported directly through their JSON Schema shape. If a test suite relies on TypeBox format keywords such as `uuid`, register the matching checker in `FormatRegistry` before validating generated output.
 
 ---
 
