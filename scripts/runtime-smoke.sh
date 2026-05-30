@@ -138,7 +138,7 @@ run_bun_smoke() {
 }
 
 run_deno_smoke() {
-  deno run --node-modules-dir=auto smoke.mjs
+  deno run --node-modules-dir=manual smoke.mjs
 }
 
 run_edge_smoke() {
