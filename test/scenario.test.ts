@@ -221,3 +221,28 @@ describe('defineScenario — overrides object', () => {
     )
   })
 })
+
+describe('defineScenario — factory function', () => {
+  afterEach(() => clearScenarios())
+
+  it('factory receives the generated value and returns a replacement', () => {
+    const schema = z.object({ name: z.string(), active: z.boolean() })
+    defineScenario<{ name: string; active: boolean }>('always-active', (value) => ({
+      ...value,
+      active: true,
+    }))
+    const result = generate(schema, { scenario: 'always-active' }) as {
+      name: string
+      active: boolean
+    }
+    expect(result.active).toBe(true)
+    expect(typeof result.name).toBe('string')
+  })
+
+  it('factory can return a completely new value', () => {
+    const schema = z.object({ code: z.number().int() })
+    defineScenario('zero-code', () => ({ code: 0 }))
+    const result = generate(schema, { scenario: 'zero-code' }) as { code: number }
+    expect(result.code).toBe(0)
+  })
+})
