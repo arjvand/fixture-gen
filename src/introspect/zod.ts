@@ -57,8 +57,7 @@ interface ZodV3 {
   _def: ZodV3Def
 }
 
-const isObject = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null
+const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
 const isZodV4 = (s: unknown): s is ZodV4 =>
   isObject(s) && isObject((s as Record<string, unknown>)._zod)
