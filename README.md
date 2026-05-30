@@ -2,10 +2,9 @@
 
 > Schema-agnostic, deterministic test fixtures for any [Standard Schema](https://standardschema.dev) validator — Zod, Valibot, ArkType, TypeBox, and more.
 
-<!-- CI badge needs the final GitHub repo slug; npm and bundle-size badges are live. -->
 [![npm version](https://img.shields.io/npm/v/fixture-gen.svg)](https://www.npmjs.com/package/fixture-gen)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/fixture-gen)](https://bundlephobia.com/package/fixture-gen)
-[![CI](https://img.shields.io/github/actions/workflow/status/your-org/fixture-gen/ci.yml)](https://github.com/your-org/fixture-gen/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/arjvand/fixture-gen/ci.yml)](https://github.com/arjvand/fixture-gen/actions)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
 
 The [Standard Schema](https://standardschema.dev) initiative unified the validation layer: frameworks can now accept Zod, Valibot, or ArkType through a single interface. But **fixture and mock generators never caught up** — `zod-fixture` is welded to Zod, and switching validators means rewriting your test data layer from scratch.

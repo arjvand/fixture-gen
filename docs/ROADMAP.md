@@ -16,11 +16,11 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🟢 Done |
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🟢 Done |
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🟢 Done |
-| [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🟡 In progress |
+| [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🟢 Done |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-Current branch status: phases 0-5 are implemented in `src/` and covered by tests/smoke checks. Phase 6 is now in progress with DX/docs, custom generators, examples, and tagged-release publishing wired into GitHub Actions.
+Current branch status: All phases (0-6) are fully implemented, tested, and published to npm with automated CI/CD and working status badges.
 
 ---
 
@@ -161,8 +161,8 @@ Current branch status: phases 0-5 are implemented in `src/` and covered by tests
 - [x] Runnable examples (per validator + relational)
 - [x] Custom field generators (the README FAQ roadmap item)
 - [x] Set up release workflow and npm publish automation
-- [ ] Wire up real README badges (npm, CI, bundle size)
-- [ ] Publish `1.0.0` to npm
+- [x] Wire up real README badges (npm, CI, bundle size)
+- [x] Publish `1.0.0` to npm
 
 **Exit criteria:** `fixture-gen@1.0.0` published with green CI and working badges.
 
