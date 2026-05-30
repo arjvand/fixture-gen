@@ -155,7 +155,7 @@ function generateFromPattern(pattern: RegExp, prng: Prng): string {
       pos++
       alts.push(parseConcat())
     }
-    if (alts.length === 1) return alts[0]!
+    if (alts.length === 1) return alts[0] as () => string
     return () => prng.pick(alts)()
   }
 
@@ -165,7 +165,7 @@ function generateFromPattern(pattern: RegExp, prng: Prng): string {
     while (pos < src.length && src[pos] !== '|' && src[pos] !== ')') {
       parts.push(parseQuantified())
     }
-    if (parts.length === 1) return parts[0]!
+    if (parts.length === 1) return parts[0] as () => string
     return () => parts.map((p) => p()).join('')
   }
 
@@ -352,8 +352,8 @@ function generateFromPattern(pattern: RegExp, prng: Prng): string {
         for (const c of escapeToChars(esc)) chars.push(c)
       } else if (src[pos + 1] === '-' && src[pos + 2] !== undefined && src[pos + 2] !== ']') {
         // Range: a-z
-        const from = src[pos]!.charCodeAt(0)
-        const to = src[pos + 2]!.charCodeAt(0)
+        const from = (src[pos] ?? '').charCodeAt(0)
+        const to = (src[pos + 2] ?? '').charCodeAt(0)
         pos += 3
         for (let i = from; i <= to; i++) chars.push(String.fromCharCode(i))
       } else {
