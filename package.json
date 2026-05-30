@@ -1,6 +1,6 @@
 {
   "name": "fixture-gen",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Schema-agnostic, deterministic test fixtures for any Standard Schema validator.",
   "type": "module",
   "license": "MIT",

@@ -20,11 +20,11 @@ The [Standard Schema](https://standardschema.dev) initiative unified the validat
 - **🔗 Relational generation** — generate connected record sets where child rows reference real parent keys (matching foreign keys across tables).
 - **🧰 Custom generators** — pin exact fields with `overrides`, or compute field and schema-wide values with deterministic hooks.
 - **🪶 Minimal runtime** — pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge runtimes.
+- **🎭 Scenario-first** — named, intent-bearing test cases: `happy-path`, `empty-state`, `boundary-min`, `boundary-max`, `invalid`, `missing-subtree`. Define project-specific cases with `defineScenario`.
 - **🧩 Fully typed** — output is inferred from your schema, so fixtures match the types you already validate against.
 
 **Planned** (see [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full post-1.0 plan):
 
-- **🎭 Scenario-first** _(Phase 7)_ — generate named cases: `happy-path`, `empty-state`, `boundary-min`, `boundary-max`, `invalid`, `missing-subtree`
 - **🛠 CLI + drift detection** _(Phase 8)_ — `fixture-gen diff` exits non-zero when schema changes alter fixture output; CI-ready watch mode and snapshot management
 - **🔒 Advanced constraints** _(Phase 9)_ — schema-wide uniqueness, cross-field invariants, and business-rule hooks across `generateMany` / `generateRelational`
 - **🌐 JSON Schema & OpenAPI bridge** _(Phase 10)_ — import OpenAPI specs, export Standard Schemas as JSON Schema, bridge AI structured-output contracts
@@ -136,6 +136,37 @@ const user = generate(User, {
 })
 ```
 
+## Scenario-first generation
+
+Pass a `scenario` to get named, intent-bearing test data instead of random values:
+
+```ts
+import { generate, generateMany, defineScenario } from 'fixture-gen'
+
+// Built-in scenarios
+generate(User, { scenario: 'happy-path' })      // valid, representative data
+generate(User, { scenario: 'empty-state' })     // optionals absent, arrays []
+generate(User, { scenario: 'boundary-min' })    // numbers/strings at min constraints
+generate(User, { scenario: 'boundary-max' })    // numbers/strings at max constraints
+generate(User, { scenario: 'invalid' })         // wrong-type root — fails validation
+generate(User, { scenario: 'missing-subtree' }) // nested objects → null
+```
+
+Define project-specific cases with `defineScenario`:
+
+```ts
+// Overrides object
+defineScenario('admin-user', { role: 'admin', active: true })
+
+// Factory function
+defineScenario<User>('premium-user', (value) => ({ ...value, plan: 'premium' }))
+
+// Inherit from a built-in, then patch
+defineScenario('empty-admin', { extends: 'empty-state', role: 'admin' })
+```
+
+Scenarios propagate through `generateMany` and `generateRelational`. See [`docs/scenarios.md`](./docs/scenarios.md) for the full guide.
+
 ## Relational generation
 
 `generateRelational` builds multiple record sets at once and wires child records to **real** parent keys, so foreign keys actually resolve:
@@ -216,6 +247,8 @@ interface GenerateOptions<T> {
   generators?: Record<string, CustomGenerator>
   /** Schema-wide hook that can override any node. */
   generator?: CustomGenerator
+  /** Named scenario controlling generation behavior. */
+  scenario?: BuiltinScenario | string
 }
 
 interface GenerateContext {
@@ -234,7 +267,34 @@ interface RelationalOptions<S> {
   counts: { [K in keyof S]?: number }
   /** Map `"childTable.field": "parentTable.field"` to link foreign keys. */
   relations?: Record<string, string>
+  /** Named scenario applied to all tables during generation. */
+  scenario?: BuiltinScenario | string
 }
+```
+
+### `defineScenario(name, input)`
+
+Register a named scenario for use with `generate({ scenario: name })`.
+
+```ts
+type BuiltinScenario =
+  | 'happy-path' | 'empty-state'
+  | 'boundary-min' | 'boundary-max'
+  | 'invalid' | 'missing-subtree'
+
+// Overrides object (may include `extends` to inherit from another scenario)
+defineScenario('admin-user', { role: 'admin' })
+defineScenario('empty-admin', { extends: 'empty-state', role: 'admin' })
+
+// Factory function
+defineScenario<User>('premium-user', (value) => ({ ...value, plan: 'premium' }))
+```
+
+Use `clearScenarios()` in test teardown to avoid cross-test pollution:
+
+```ts
+import { clearScenarios } from 'fixture-gen'
+afterEach(() => clearScenarios())
 ```
 
 ## Comparison
@@ -247,7 +307,7 @@ interface RelationalOptions<S> {
 | Relational / FK generation | ✅ | ❌ | ❌ (manual) |
 | Maps schema → mock automatically | ✅ | ✅ (Zod) | ❌ (write it yourself) |
 | Runtime dependencies | none | Zod | none |
-| Named scenarios (happy-path, etc.) | 🔵 Phase 7 | ❌ | ❌ |
+| Named scenarios (happy-path, etc.) | ✅ | ❌ | ❌ |
 | CLI + drift detection | 🔵 Phase 8 | ❌ | ❌ |
 | JSON Schema / OpenAPI import-export | 🔵 Phase 10 | ❌ | ❌ |
 

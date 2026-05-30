@@ -10,4 +10,4 @@ export { defineScenario, clearScenarios } from './scenario'
 export type { BuiltinScenario, ScenarioName } from './scenario'
 
 /** Package version marker. */
-export const VERSION = '1.0.0'
+export const VERSION = '1.1.0'
