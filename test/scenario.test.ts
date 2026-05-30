@@ -145,3 +145,48 @@ describe("scenario: 'boundary-max'", () => {
     expect(result.tags.length).toBe(3)
   })
 })
+
+describe("scenario: 'invalid'", () => {
+  it('object schema produces a value that fails validation', () => {
+    const schema = z.object({ name: z.string() })
+    const result = generate(schema, { scenario: 'invalid' })
+    const validation = schema['~standard'].validate(result)
+    if (validation instanceof Promise) throw new Error('expected sync')
+    expect(validation.issues).toBeDefined()
+  })
+
+  it('string schema produces a value that fails validation', () => {
+    const schema = z.string()
+    const result = generate(schema, { scenario: 'invalid' })
+    const validation = schema['~standard'].validate(result)
+    if (validation instanceof Promise) throw new Error('expected sync')
+    expect(validation.issues).toBeDefined()
+  })
+
+  it('number schema produces a value that fails validation', () => {
+    const schema = z.number()
+    const result = generate(schema, { scenario: 'invalid' })
+    const validation = schema['~standard'].validate(result)
+    if (validation instanceof Promise) throw new Error('expected sync')
+    expect(validation.issues).toBeDefined()
+  })
+})
+
+describe("scenario: 'missing-subtree'", () => {
+  it('nested required object is null', () => {
+    const schema = z.object({
+      profile: z.object({ name: z.string(), age: z.number() }),
+    })
+    const result = generate(schema, { scenario: 'missing-subtree' }) as {
+      profile: { name: string; age: number } | null
+    }
+    expect(result.profile).toBeNull()
+  })
+
+  it('root object is generated normally (not null)', () => {
+    const schema = z.object({ name: z.string() })
+    const result = generate(schema, { scenario: 'missing-subtree' }) as { name: string }
+    expect(result).not.toBeNull()
+    expect(typeof result.name).toBe('string')
+  })
+})

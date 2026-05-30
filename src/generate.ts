@@ -6,6 +6,7 @@ import {
 } from './custom'
 import { generateBuiltinValue } from './generators'
 import { introspect } from './introspect'
+import type { IntrospectedNode } from './introspect'
 import type { ScenarioName } from './scenario'
 import type { InferOutput, StandardSchemaV1 } from './standard'
 
@@ -43,12 +44,31 @@ function generateInternal(schema: object, options: GenerateOptions = {}): unknow
   return value
 }
 
+function generateInvalidValue(node: IntrospectedNode): unknown {
+  switch (node.kind) {
+    case 'string':
+      return 42
+    case 'number':
+    case 'integer':
+      return 'not-a-number'
+    case 'boolean':
+      return 'not-a-boolean'
+    case 'array':
+    case 'object':
+    default:
+      return null
+  }
+}
+
 function generateNode(
   node: Parameters<typeof generateBuiltinValue>[0],
   seed: number,
   path: readonly string[],
   options: GenerateOptions,
 ): unknown {
+  if (options.scenario === 'invalid' && path.length === 0) {
+    return generateInvalidValue(node)
+  }
   const context = createContext(seed, path, node)
   const fieldGenerator = resolveCustomGenerator(path, options.generators)
   if (fieldGenerator) {

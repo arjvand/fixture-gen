@@ -70,6 +70,7 @@ export function generateBuiltinValue(
     case 'date':
       return new Date(DATE_ANCHOR + prng.int(0, DATE_SPREAD))
     case 'object': {
+      if (scenario === 'missing-subtree' && path.length > 0) return null
       const result: Record<string, unknown> = {}
       for (const key of Object.keys(node.entries)) {
         const child = node.entries[key]
