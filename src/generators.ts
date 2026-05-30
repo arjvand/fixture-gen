@@ -34,6 +34,7 @@ export function generateBuiltinValue(
       return result
     }
     case 'array': {
+      if (scenario === 'empty-state') return []
       const min = node.constraints?.minLength ?? 1
       const max = node.constraints?.maxLength ?? Math.max(min, 3)
       const length = prng.int(min, max)
@@ -52,6 +53,7 @@ export function generateBuiltinValue(
       return values
     }
     case 'record': {
+      if (scenario === 'empty-state') return {}
       const count = prng.int(1, 3)
       const result: Record<string, unknown> = {}
       for (let i = 0; i < count; i++) {
@@ -61,7 +63,11 @@ export function generateBuiltinValue(
       return result
     }
     case 'optional':
+      if (scenario === 'empty-state') return undefined
+      return generateChild(node.inner, path)
     case 'nullable':
+      if (scenario === 'empty-state') return null
+      return generateChild(node.inner, path)
     case 'default':
     case 'catch':
       return generateChild(node.inner, path)
