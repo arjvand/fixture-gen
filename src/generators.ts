@@ -81,6 +81,9 @@ type StringConstraints = NonNullable<Extract<IntrospectedNode, { kind: 'string' 
 type NumberConstraints = NonNullable<Extract<IntrospectedNode, { kind: 'number' }>['constraints']>
 
 function generateString(constraints: StringConstraints | undefined, prng: Prng): string {
+  if (constraints?.pattern) {
+    return generateFromPattern(constraints.pattern, prng)
+  }
   if (constraints?.format) {
     switch (constraints.format) {
       case 'uuid':
@@ -122,6 +125,253 @@ function generateString(constraints: StringConstraints | undefined, prng: Prng):
   const min = constraints?.minLength ?? 4
   const max = constraints?.maxLength ?? Math.max(min, 12)
   return prng.string(prng.int(min, max))
+}
+
+// ── RegExp-to-string ─────────────────────────────────────────────────────────
+
+/**
+ * A lightweight, recursive-descent regex-to-string generator.
+ *
+ * Supported constructs:
+ *   - Literal characters and most escape sequences (\d, \w, \s, \D, \W, \S, \n, \t, …)
+ *   - Character classes ([a-z], [^…], \d inside classes, ranges)
+ *   - Quantifiers: *, +, ?, {n}, {n,m}, {n,} (capped at reasonable maximums)
+ *   - Alternation via |
+ *   - Groups: capturing (...) and non-capturing (?:...)
+ *   - Anchors ^ and $ (silently consumed)
+ */
+function generateFromPattern(pattern: RegExp, prng: Prng): string {
+  const src = pattern.source
+  let pos = 0
+
+  /** Alternation: A | B | C */
+  function parseAlternation(): () => string {
+    const alts: Array<() => string> = [parseConcat()]
+    while (pos < src.length && src[pos] === '|') {
+      pos++
+      alts.push(parseConcat())
+    }
+    if (alts.length === 1) return alts[0]!
+    return () => prng.pick(alts)()
+  }
+
+  /** Concatenation: AB */
+  function parseConcat(): () => string {
+    const parts: Array<() => string> = []
+    while (pos < src.length && src[pos] !== '|' && src[pos] !== ')') {
+      parts.push(parseQuantified())
+    }
+    if (parts.length === 1) return parts[0]!
+    return () => parts.map((p) => p()).join('')
+  }
+
+  /** An atom optionally followed by a quantifier */
+  function parseQuantified(): () => string {
+    const base = parseAtom()
+    if (pos >= src.length) return base
+
+    let min = 1
+    let max = 1
+    const ch = src[pos]
+
+    if (ch === '*') {
+      pos++
+      min = 0
+      max = 3
+    } else if (ch === '+') {
+      pos++
+      min = 1
+      max = 4
+    } else if (ch === '?') {
+      pos++
+      min = 0
+      max = 1
+    } else if (ch === '{') {
+      pos++ // skip '{'
+      const numStart = pos
+      while (pos < src.length && src[pos] !== '}' && src[pos] !== ',') pos++
+      min = Number.parseInt(src.slice(numStart, pos), 10)
+      if (src[pos] === ',') {
+        pos++ // skip ','
+        const maxStart = pos
+        while (pos < src.length && src[pos] !== '}') pos++
+        max = pos === maxStart ? min + 3 : Number.parseInt(src.slice(maxStart, pos), 10)
+      } else {
+        max = min
+      }
+      pos++ // skip '}'
+    } else {
+      return base
+    }
+
+    // consume lazy modifier '?' (treat same as greedy for generation)
+    if (src[pos] === '?') pos++
+
+    const lo = min
+    const hi = max
+    return () => {
+      const count = prng.int(lo, hi)
+      let out = ''
+      for (let i = 0; i < count; i++) out += base()
+      return out
+    }
+  }
+
+  /** A single atomic unit: literal, escape, class, or group */
+  function parseAtom(): () => string {
+    const ch = src[pos]
+
+    // Anchors — consume silently
+    if (ch === '^' || ch === '$') {
+      pos++
+      return () => ''
+    }
+
+    // Wildcard
+    if (ch === '.') {
+      pos++
+      const WILDCARD = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      return () => WILDCARD[prng.int(0, WILDCARD.length - 1)] ?? 'a'
+    }
+
+    // Group: (...) or (?:...)
+    if (ch === '(') {
+      pos++ // skip '('
+      // Non-capturing group (?:...) or other (?...) modifiers
+      if (src[pos] === '?' && src[pos + 1] === ':') {
+        pos += 2
+      } else if (src[pos] === '?') {
+        // lookahead/lookbehind/flags — skip to matching ')'
+        let depth = 1
+        while (pos < src.length && depth > 0) {
+          if (src[pos] === '(') depth++
+          else if (src[pos] === ')') depth--
+          pos++
+        }
+        return () => ''
+      }
+      const inner = parseAlternation()
+      if (src[pos] === ')') pos++ // skip ')'
+      return inner
+    }
+
+    // Character class: [...]
+    if (ch === '[') {
+      return parseCharClass()
+    }
+
+    // Escape sequence: \...
+    if (ch === '\\') {
+      return parseEscape()
+    }
+
+    // Plain literal character
+    pos++
+    const literal = ch ?? ''
+    return () => literal
+  }
+
+  /** Parse \X escape sequences */
+  function parseEscape(): () => string {
+    pos++ // skip '\'
+    const esc = src[pos++] ?? ''
+    switch (esc) {
+      case 'd': {
+        return () => String(prng.int(0, 9))
+      }
+      case 'D': {
+        const NONDIGIT = 'abcdefghijklmnopqrstuvwxyz'
+        return () => NONDIGIT[prng.int(0, NONDIGIT.length - 1)] ?? 'a'
+      }
+      case 'w': {
+        const WORD = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'
+        return () => WORD[prng.int(0, WORD.length - 1)] ?? 'a'
+      }
+      case 'W': {
+        const NONWORD = '!@#$%^&*()-+'
+        return () => NONWORD[prng.int(0, NONWORD.length - 1)] ?? '-'
+      }
+      case 's':
+        return () => ' '
+      case 'S': {
+        const NONSPACE = 'abcdefghijklmnopqrstuvwxyz'
+        return () => NONSPACE[prng.int(0, NONSPACE.length - 1)] ?? 'a'
+      }
+      case 'n':
+        return () => '\n'
+      case 'r':
+        return () => '\r'
+      case 't':
+        return () => '\t'
+      default:
+        return () => esc
+    }
+  }
+
+  /** Expand a \X escape sequence into an array of possible characters */
+  function escapeToChars(esc: string): string[] {
+    switch (esc) {
+      case 'd':
+        return '0123456789'.split('')
+      case 'D':
+        return 'abcdefghijklmnopqrstuvwxyz'.split('')
+      case 'w':
+        return 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'.split('')
+      case 'W':
+        return '!@#$%^&*()-+'.split('')
+      case 's':
+        return [' ', '\t']
+      case 'S':
+        return 'abcdefghijklmnopqrstuvwxyz'.split('')
+      case 'n':
+        return ['\n']
+      case 'r':
+        return ['\r']
+      case 't':
+        return ['\t']
+      default:
+        return [esc]
+    }
+  }
+
+  /** Parse a character class [...] */
+  function parseCharClass(): () => string {
+    pos++ // skip '['
+    const negated = src[pos] === '^'
+    if (negated) pos++
+
+    const chars: string[] = []
+    while (pos < src.length && src[pos] !== ']') {
+      if (src[pos] === '\\') {
+        pos++ // skip '\'
+        const esc = src[pos++] ?? ''
+        for (const c of escapeToChars(esc)) chars.push(c)
+      } else if (src[pos + 1] === '-' && src[pos + 2] !== undefined && src[pos + 2] !== ']') {
+        // Range: a-z
+        const from = src[pos]!.charCodeAt(0)
+        const to = src[pos + 2]!.charCodeAt(0)
+        pos += 3
+        for (let i = from; i <= to; i++) chars.push(String.fromCharCode(i))
+      } else {
+        chars.push(src[pos++] ?? '')
+      }
+    }
+    if (src[pos] === ']') pos++ // skip ']'
+
+    if (negated) {
+      // For negated classes use a printable ASCII set, excluding the matched chars
+      const PRINTABLE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        .split('')
+        .filter((c) => !chars.includes(c))
+      const pool = PRINTABLE.length > 0 ? PRINTABLE : ['x']
+      return () => pool[prng.int(0, pool.length - 1)] ?? 'x'
+    }
+
+    const pool = chars.length > 0 ? chars : ['a']
+    return () => pool[prng.int(0, pool.length - 1)] ?? ''
+  }
+
+  return parseAlternation()()
 }
 
 function generateUuid(prng: Prng): string {

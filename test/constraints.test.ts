@@ -100,3 +100,55 @@ describe('generate — number constraints', () => {
     expect(validates(schema, value)).toBe(true)
   })
 })
+
+describe('generate — regex pattern constraints', () => {
+  it('phone number pattern validates', () => {
+    const schema = z.object({ phone: z.string().regex(/^\d{3}-\d{3}-\d{4}$/) })
+    const result = generate(schema, { seed: 1 }) as { phone: string }
+    expect(/^\d{3}-\d{3}-\d{4}$/.test(result.phone)).toBe(true)
+    expect(validates(schema, result)).toBe(true)
+  })
+
+  it('US zip code pattern validates', () => {
+    const schema = z.string().regex(/^\d{5}(-\d{4})?$/)
+    const value = generate(schema, { seed: 1 }) as string
+    expect(/^\d{5}(-\d{4})?$/.test(value)).toBe(true)
+    expect(validates(schema, value)).toBe(true)
+  })
+
+  it('hex color pattern validates', () => {
+    const schema = z.string().regex(/^#[0-9a-fA-F]{6}$/)
+    const value = generate(schema, { seed: 1 }) as string
+    expect(/^#[0-9a-fA-F]{6}$/.test(value)).toBe(true)
+    expect(validates(schema, value)).toBe(true)
+  })
+
+  it('word-only pattern validates', () => {
+    const schema = z.string().regex(/^\w+$/)
+    const value = generate(schema, { seed: 1 }) as string
+    expect(/^\w+$/.test(value)).toBe(true)
+    expect(validates(schema, value)).toBe(true)
+  })
+
+  it('alternation pattern validates', () => {
+    const schema = z.string().regex(/^(foo|bar|baz)$/)
+    const value = generate(schema, { seed: 1 }) as string
+    expect(/^(foo|bar|baz)$/.test(value)).toBe(true)
+    expect(validates(schema, value)).toBe(true)
+  })
+
+  it('generation is deterministic across same seed', () => {
+    const schema = z.string().regex(/^\d{3}-\d{3}-\d{4}$/)
+    const a = generate(schema, { seed: 42 })
+    const b = generate(schema, { seed: 42 })
+    expect(a).toBe(b)
+  })
+
+  it('different seeds produce different outputs', () => {
+    const schema = z.string().regex(/^\d{10}$/)
+    const a = generate(schema, { seed: 1 })
+    const b = generate(schema, { seed: 2 })
+    expect(a).not.toBe(b)
+  })
+})
+
