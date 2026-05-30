@@ -190,8 +190,8 @@ function arrayConstraintsV4(checks: unknown[]): ArrayConstraints {
     const ch = check as Record<string, unknown>
     if (!isObject(ch._zod) || !isObject((ch._zod as Record<string, unknown>).def)) continue
     const d = (ch._zod as Record<string, unknown>).def as Record<string, unknown>
-    if (d.check === 'min_size' && typeof d.minimum === 'number') c.minLength = d.minimum
-    else if (d.check === 'max_size' && typeof d.maximum === 'number') c.maxLength = d.maximum
+    if (d.check === 'min_length' && typeof d.minimum === 'number') c.minLength = d.minimum
+    else if (d.check === 'max_length' && typeof d.maximum === 'number') c.maxLength = d.maximum
   }
   return c
 }
