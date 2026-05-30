@@ -35,16 +35,25 @@ export function generate(schema: object, options: GenerateOptions = {}): unknown
   return generateInternal(schema, options)
 }
 
-function generateInternal(schema: object, options: GenerateOptions = {}): unknown {
+function generateInternal(
+  schema: object,
+  options: GenerateOptions = {},
+  visited: Set<string> = new Set(),
+): unknown {
   const { scenario } = options
 
   if (scenario && !isBuiltinScenario(scenario)) {
+    if (visited.has(scenario)) {
+      throw new Error(`fixture-gen: scenario "${scenario}" has a circular extends chain`)
+    }
     const def = resolveUserScenario(scenario)
     if (!def) {
       throw new Error(`fixture-gen: unknown scenario "${scenario}"`)
     }
+    const next = new Set(visited)
+    next.add(scenario)
     const baseOptions: GenerateOptions = { ...options, scenario: def.extends }
-    const value = generateInternal(schema, baseOptions)
+    const value = generateInternal(schema, baseOptions, next)
 
     if (def.factory) return def.factory(value)
     if (def.overrides && typeof value === 'object' && value !== null && !Array.isArray(value)) {
@@ -71,8 +80,6 @@ function generateInvalidValue(node: IntrospectedNode): unknown {
       return 'not-a-number'
     case 'boolean':
       return 'not-a-boolean'
-    case 'array':
-    case 'object':
     default:
       return null
   }

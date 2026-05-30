@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { generate, generateMany } from '../src/generate'
-import { clearScenarios, defineScenario } from '../src/scenario'
-import { generateRelational } from '../src/relational'
 import {
-  defineScenario as defineScenarioFromIndex,
   clearScenarios as clearFromIndex,
+  defineScenario as defineScenarioFromIndex,
 } from '../src/index'
+import { generateRelational } from '../src/relational'
+import { clearScenarios, defineScenario } from '../src/scenario'
 
 describe('scenario option — type acceptance', () => {
   it('accepts a built-in scenario name without error', () => {
@@ -309,6 +309,13 @@ describe("scenario: 'happy-path'", () => {
 
 describe('defineScenario — inheritance (extends)', () => {
   afterEach(() => clearScenarios())
+
+  it('throws on circular extends chain', () => {
+    defineScenario('cyclic', { extends: 'cyclic' })
+    expect(() => generate(z.object({ name: z.string() }), { scenario: 'cyclic' })).toThrow(
+      'circular extends chain',
+    )
+  })
 
   it('inherits base scenario behavior and applies overrides on top', () => {
     const schema = z.object({
