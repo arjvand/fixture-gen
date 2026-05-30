@@ -18,6 +18,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
+      - run: npm run size
       - run: npm run test:unit
 
   compatibility:
@@ -34,3 +35,27 @@ jobs:
           cache: npm
       - run: npm ci
       - run: CROSS_VALIDATOR_VENDOR=${{ matrix.vendor }} npm run test:compat
+
+  runtime-smoke:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime: [node, bun, deno, edge]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - if: matrix.runtime == 'bun'
+        uses: oven-sh/setup-bun@v2
+      - if: matrix.runtime == 'deno'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:runtime
+        env:
+          RUNTIME_SMOKE_TARGET: ${{ matrix.runtime }}

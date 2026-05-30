@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **Introspection reality:** the `~standard` interface carries *no schema structure* at runtime (only `vendor`/`validate`/type-level `types`). Structure is recovered by a centralized, **`~standard.vendor`-keyed** introspection layer that reads each validator's internals (validators stay devDeps only). Unknown vendors / opaque nodes fall back to a constraint-satisfying placeholder verified via `~standard.validate`.
 
-**Current state: Phase 3 (cross-validator compatibility).** `generate(schema, { seed })` produces deterministic, validating output for the supported validator matrix: Zod, Valibot, ArkType, and TypeBox. `generateMany` is also covered; `generateRelational` still lands in a later phase. The intended full API is specified in `README.md`, and the ordered build plan in `docs/ROADMAP.md`. **Read `docs/ROADMAP.md` before starting feature work** — pick up the lowest open phase, and keep its status table/checkboxes in sync as work lands.
+**Current state: Phase 5 (runtime and footprint hardening).** `generate(schema, { seed })` produces deterministic, validating output for the supported validator matrix: Zod, Valibot, ArkType, and TypeBox. `generateMany` and `generateRelational` are also covered. The intended full API is specified in `README.md`, and the ordered build plan in `docs/ROADMAP.md`. **Read `docs/ROADMAP.md` before starting feature work** — pick up the lowest open phase, and keep its status table/checkboxes in sync as work lands.
 
 ## Commands
 

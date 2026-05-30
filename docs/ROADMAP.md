@@ -15,12 +15,12 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [2 — Type coverage](#phase-2--rich-type--constraint-coverage) | Full type & constraint support | 🟢 Done |
 | [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🟢 Done |
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🟢 Done |
-| [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🔵 Planned |
+| [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🟢 Done |
 | [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🔵 Planned |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-Current branch status: phases 0-4 are implemented in `src/` and covered by tests. Phase 5 is the next open implementation track.
+Current branch status: phases 0-5 are implemented in `src/` and covered by tests/smoke checks. Phase 6 is the next open implementation track.
 
 ---
 
@@ -137,13 +137,13 @@ Current branch status: phases 0-4 are implemented in `src/` and covered by tests
 
 **Deliverables:** Verified multi-runtime support, dependency audit, and a bundle-size budget.
 
-- [ ] Smoke tests on Node.js
-- [ ] Smoke tests on Bun
-- [ ] Smoke tests on Deno
-- [ ] Smoke test on an edge runtime (Workers / Vercel Edge)
-- [ ] Confirm zero runtime dependencies
-- [ ] Verify ESM + type declarations resolve cleanly for consumers
-- [ ] Add a bundle-size check/budget (size-limit) and confirm tree-shakeability
+- [x] Smoke tests on Node.js
+- [x] Smoke tests on Bun
+- [x] Smoke tests on Deno
+- [x] Smoke test on an edge runtime (Workers / Vercel Edge)
+- [x] Confirm zero runtime dependencies
+- [x] Verify ESM + type declarations resolve cleanly for consumers
+- [x] Add a bundle-size check/budget (size-limit) and confirm tree-shakeability
 
 **Exit criteria:** Smoke tests pass on each runtime; package ships zero runtime deps and stays within the size budget.
 
