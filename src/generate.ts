@@ -6,6 +6,7 @@ import {
 } from './custom'
 import { generateBuiltinValue } from './generators'
 import { introspect } from './introspect'
+import type { ScenarioName } from './scenario'
 import type { InferOutput, StandardSchemaV1 } from './standard'
 
 export interface GenerateOptions<T = unknown> {
@@ -17,6 +18,8 @@ export interface GenerateOptions<T = unknown> {
   generators?: Record<string, CustomGenerator>
   /** Schema-wide custom generator hook that can override any node. */
   generator?: CustomGenerator
+  /** Named scenario controlling generation behavior. */
+  scenario?: ScenarioName
 }
 
 /** Generate a single fixture from a Standard Schema. */
