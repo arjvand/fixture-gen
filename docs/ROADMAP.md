@@ -17,7 +17,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🟢 Done |
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🟢 Done |
 | [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🟢 Done |
-| [7 — Scenarios](#phase-7--scenario-first-generation) | Named test-case generation | 🔵 Planned |
+| [7 — Scenarios](#phase-7--scenario-first-generation) | Named test-case generation | 🟢 Done |
 | [8 — CLI & workflow](#phase-8--cli--workflow-tooling) | Drift detection, watch, CI integration | 🔵 Planned |
 | [9 — Advanced constraints](#phase-9--advanced-constraint-engine) | Uniqueness, cross-field rules, business hooks | 🔵 Planned |
 | [10 — JSON Schema bridge](#phase-10--json-schema--openapi-bridge) | OpenAPI / JSON Schema import-export | 🔵 Planned |
@@ -25,7 +25,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-**Current status:** Phases 0–6 are complete and published as `fixture-gen@1.0.0`. Phases 7–11 chart the post-1.0 roadmap toward the fixture compiler vision: scenario-aware generation, CLI workflow tooling, JSON Schema bridging, advanced constraints, and ecosystem plugins.
+**Current status:** Phases 0–7 are complete and published as `fixture-gen@1.1.0`. Phases 8–11 chart the post-1.1 roadmap toward the fixture compiler vision: CLI workflow tooling, advanced constraints, JSON Schema bridging, and ecosystem plugins.
 
 ---
 
@@ -191,14 +191,14 @@ Items below are tracked here before they are promoted into a numbered phase. Onc
 
 **Deliverables:** Built-in scenario catalogue, `defineScenario` for user-defined cases, and scenario propagation through `generateMany` / `generateRelational`.
 
-- [ ] Add `scenario` option to `generate(schema, { scenario, seed })`
-- [ ] Built-in scenarios: `'happy-path'` (valid, representative), `'empty-state'` (all optionals absent, arrays empty), `'boundary-min'` (all constraints at lower bound), `'boundary-max'` (all constraints at upper bound), `'invalid'` (intentionally fails schema — useful for error-path tests), `'missing-subtree'` (required nested object absent)
-- [ ] `defineScenario(name, overrides | factory)` for project-specific cases
-- [ ] Scenario inheritance: `defineScenario('my-case', { extends: 'happy-path', … })`
-- [ ] Propagate scenario through `generateMany` and `generateRelational`
-- [ ] Document each built-in scenario with examples in `docs/scenarios.md`
+- [x] Add `scenario` option to `generate(schema, { scenario, seed })`
+- [x] Built-in scenarios: `'happy-path'` (valid, representative), `'empty-state'` (all optionals absent, arrays empty), `'boundary-min'` (all constraints at lower bound), `'boundary-max'` (all constraints at upper bound), `'invalid'` (intentionally fails schema — useful for error-path tests), `'missing-subtree'` (required nested object absent)
+- [x] `defineScenario(name, overrides | factory)` for project-specific cases
+- [x] Scenario inheritance: `defineScenario('my-case', { extends: 'happy-path', … })`
+- [x] Propagate scenario through `generateMany` and `generateRelational`
+- [x] Document each built-in scenario with examples in `docs/scenarios.md`
 
-**Exit criteria:** `generate(schema, { scenario: 'boundary-min' })` always produces a value at the minimum boundary; `defineScenario` lets users register named cases; all scenarios covered by round-trip validation tests.
+**Exit criteria:** `generate(schema, { scenario: 'boundary-min' })` always produces a value at the minimum boundary; `defineScenario` lets users register named cases; all scenarios covered by round-trip validation tests. ✅ Shipped in `1.1.0`.
 
 ---
 
