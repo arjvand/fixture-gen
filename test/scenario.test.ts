@@ -246,3 +246,40 @@ describe('defineScenario — factory function', () => {
     expect(result.code).toBe(0)
   })
 })
+
+describe('defineScenario — inheritance (extends)', () => {
+  afterEach(() => clearScenarios())
+
+  it('inherits base scenario behavior and applies overrides on top', () => {
+    const schema = z.object({
+      tags: z.array(z.string()),
+      role: z.string(),
+    })
+    defineScenario('admin-empty', { extends: 'empty-state', role: 'admin' })
+    const result = generate(schema, { scenario: 'admin-empty' }) as {
+      tags: string[]
+      role: string
+    }
+    expect(result.tags).toEqual([]) // from empty-state
+    expect(result.role).toBe('admin') // from override
+  })
+
+  it('inherits from another user-defined scenario', () => {
+    const schema = z.object({ active: z.boolean(), role: z.string() })
+    defineScenario('base-case', { role: 'user' })
+    defineScenario('admin-case', { extends: 'base-case', role: 'admin' })
+    const result = generate(schema, { scenario: 'admin-case' }) as {
+      active: boolean
+      role: string
+    }
+    expect(result.role).toBe('admin')
+    expect(typeof result.active).toBe('boolean')
+  })
+
+  it('no extends behaves as happy-path base when omitted', () => {
+    const schema = z.object({ count: z.number().int().min(0).max(10) })
+    defineScenario('zero-count', { count: 0 })
+    const result = generate(schema, { scenario: 'zero-count' }) as { count: number }
+    expect(result.count).toBe(0)
+  })
+})
