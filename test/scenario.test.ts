@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { generate } from '../src/generate'
+import { generate, generateMany } from '../src/generate'
 import { clearScenarios, defineScenario } from '../src/scenario'
+import { generateRelational } from '../src/relational'
 
 describe('scenario option — type acceptance', () => {
   it('accepts a built-in scenario name without error', () => {
@@ -244,6 +245,37 @@ describe('defineScenario — factory function', () => {
     defineScenario('zero-code', () => ({ code: 0 }))
     const result = generate(schema, { scenario: 'zero-code' }) as { code: number }
     expect(result.code).toBe(0)
+  })
+})
+
+describe('scenario propagation', () => {
+  it('generateMany propagates scenario to every element', () => {
+    const schema = z.object({ tags: z.array(z.string()) })
+    const results = generateMany(schema, 3, { scenario: 'empty-state' }) as Array<{
+      tags: string[]
+    }>
+    for (const result of results) {
+      expect(result.tags).toEqual([])
+    }
+  })
+
+  it('generateRelational propagates scenario to all tables', () => {
+    const schemas = {
+      users: z.object({ id: z.string(), tags: z.array(z.string()) }),
+      posts: z.object({ id: z.string(), authorId: z.string(), items: z.array(z.number()) }),
+    }
+    const result = generateRelational(schemas, {
+      counts: { users: 2, posts: 3 },
+      relations: { 'posts.authorId': 'users.id' },
+      scenario: 'empty-state',
+    }) as { users: Array<{ id: string; tags: string[] }>; posts: Array<{ items: number[] }> }
+
+    for (const user of result.users) {
+      expect(user.tags).toEqual([])
+    }
+    for (const post of result.posts) {
+      expect(post.items).toEqual([])
+    }
   })
 })
 

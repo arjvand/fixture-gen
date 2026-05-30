@@ -1,6 +1,7 @@
 import { generateMany } from './generate'
 import { deriveSeed, hashString } from './hash'
 import { type IntrospectedNode, introspect } from './introspect'
+import type { ScenarioName } from './scenario'
 import type { InferOutput, StandardSchemaV1 } from './standard'
 
 export interface RelationalOptions<S extends Record<string, object> = Record<string, object>> {
@@ -10,6 +11,8 @@ export interface RelationalOptions<S extends Record<string, object> = Record<str
   counts: Partial<Record<keyof S, number>>
   /** Map `"childTable.field"` to `"parentTable.field"` to link foreign keys. */
   relations?: Record<string, string>
+  /** Named scenario applied to all tables during generation. */
+  scenario?: ScenarioName
 }
 
 export type RelationalResult<S extends Record<string, StandardSchemaV1>> = {
@@ -266,7 +269,10 @@ export function generateRelational(
     if (schema === undefined) {
       throw new Error(`generateRelational: unknown table "${table}"`)
     }
-    rowsByTable[table] = generateMany(schema, count, { seed: tableSeed })
+    rowsByTable[table] = generateMany(schema, count, {
+      seed: tableSeed,
+      scenario: options.scenario,
+    })
   }
 
   for (const table of order) {
