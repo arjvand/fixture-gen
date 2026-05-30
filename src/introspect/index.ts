@@ -1,7 +1,7 @@
-import { introspectZod } from './zod'
-import { introspectValibot } from './valibot'
 import { introspectArkType } from './arktype'
 import { introspectTypeBox } from './typebox'
+import { introspectValibot } from './valibot'
+import { introspectZod } from './zod'
 
 export interface StringConstraints {
   format?: string
@@ -41,7 +41,7 @@ export type IntrospectedNode =
   | { kind: 'literal'; value: unknown }
   | { kind: 'unknown' }
 
-const isObject = (value: unknown): value is Record<string, unknown> | Function =>
+const isObject = (value: unknown): value is Record<string, unknown> =>
   (typeof value === 'object' || typeof value === 'function') && value !== null
 
 const isTypeBoxSchema = (value: unknown): boolean =>
@@ -49,8 +49,9 @@ const isTypeBoxSchema = (value: unknown): boolean =>
   Object.getOwnPropertySymbols(value).some((symbol) => symbol.toString() === 'Symbol(TypeBox.Kind)')
 
 export function introspect(schema: unknown): IntrospectedNode {
-  const standard =
-    isObject(schema) ? ((schema as any)['~standard'] as { vendor?: string } | undefined) : undefined
+  const standard = isObject(schema)
+    ? (schema['~standard'] as { vendor?: string } | undefined)
+    : undefined
   const vendor = standard?.vendor
   switch (vendor) {
     case 'zod':

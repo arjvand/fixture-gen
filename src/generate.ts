@@ -39,11 +39,19 @@ export function generateMany<S extends StandardSchemaV1>(
 ): Array<InferOutput<S>>
 /** Generate an array of `count` fixtures for a TypeBox schema or other supported schema object. */
 export function generateMany(schema: object, count: number, options?: GenerateOptions): unknown[]
-export function generateMany(schema: object, count: number, options: GenerateOptions = {}): unknown[] {
+export function generateMany(
+  schema: object,
+  count: number,
+  options: GenerateOptions = {},
+): unknown[] {
   return generateManyInternal(schema, count, options)
 }
 
-function generateManyInternal(schema: object, count: number, options: GenerateOptions = {}): unknown[] {
+function generateManyInternal(
+  schema: object,
+  count: number,
+  options: GenerateOptions = {},
+): unknown[] {
   const base = options.seed ?? 0
   return Array.from({ length: count }, (_, i) => generate(schema, { ...options, seed: base + i }))
 }

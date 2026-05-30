@@ -1,4 +1,9 @@
-import type { ArrayConstraints, IntrospectedNode, NumberConstraints, StringConstraints } from './index'
+import type {
+  ArrayConstraints,
+  IntrospectedNode,
+  NumberConstraints,
+  StringConstraints,
+} from './index'
 
 interface ValibotSchema {
   kind?: string
@@ -43,7 +48,10 @@ export function introspectValibot(schema: unknown): IntrospectedNode {
 
   switch (schema.type) {
     case 'string':
-      return { kind: 'string', ...(hasKeys(stringConstraints(schema)) && { constraints: stringConstraints(schema) }) }
+      return {
+        kind: 'string',
+        ...(hasKeys(stringConstraints(schema)) && { constraints: stringConstraints(schema) }),
+      }
     case 'number': {
       const constraints = numberConstraints(schema)
       if (isInteger(schema)) {
@@ -95,7 +103,9 @@ export function introspectValibot(schema: unknown): IntrospectedNode {
         values: Array.isArray(schema.options)
           ? schema.options.filter(
               (value): value is string | number | boolean =>
-                typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean',
+                typeof value === 'string' ||
+                typeof value === 'number' ||
+                typeof value === 'boolean',
             )
           : [],
       }
@@ -113,7 +123,9 @@ export function introspectValibot(schema: unknown): IntrospectedNode {
   }
 }
 
-function objectEntries(entries: Record<string, unknown> | undefined): Record<string, IntrospectedNode> {
+function objectEntries(
+  entries: Record<string, unknown> | undefined,
+): Record<string, IntrospectedNode> {
   const result: Record<string, IntrospectedNode> = {}
   for (const [key, value] of Object.entries(entries ?? {})) {
     result[key] = introspectValibot(value)

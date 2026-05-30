@@ -1,4 +1,9 @@
-import type { ArrayConstraints, IntrospectedNode, NumberConstraints, StringConstraints } from './index'
+import type {
+  ArrayConstraints,
+  IntrospectedNode,
+  NumberConstraints,
+  StringConstraints,
+} from './index'
 
 const TYPEBOX_KIND = 'Symbol(TypeBox.Kind)'
 const TYPEBOX_OPTIONAL = 'Symbol(TypeBox.Optional)'
@@ -11,7 +16,8 @@ const hasTypeBoxKind = (value: unknown): boolean =>
   Object.getOwnPropertySymbols(value).some((symbol) => symbol.toString() === TYPEBOX_KIND)
 
 const isOptional = (value: unknown): boolean =>
-  isObject(value) && Object.getOwnPropertySymbols(value).some((symbol) => symbol.toString() === TYPEBOX_OPTIONAL)
+  isObject(value) &&
+  Object.getOwnPropertySymbols(value).some((symbol) => symbol.toString() === TYPEBOX_OPTIONAL)
 
 const kindName = (value: unknown): string | undefined => {
   if (!isObject(value)) return undefined
@@ -69,7 +75,10 @@ function parseTypeBox(schema: unknown): IntrospectedNode {
 
   switch (schema.type) {
     case 'string':
-      return { kind: 'string', ...(hasKeys(stringConstraints(schema)) && { constraints: stringConstraints(schema) }) }
+      return {
+        kind: 'string',
+        ...(hasKeys(stringConstraints(schema)) && { constraints: stringConstraints(schema) }),
+      }
     case 'number': {
       const constraints = numberConstraints(schema)
       return { kind: 'number', ...(hasKeys(constraints) && { constraints }) }
@@ -90,7 +99,11 @@ function parseTypeBox(schema: unknown): IntrospectedNode {
         }
       }
       if (!isObject(items)) {
-        return { kind: 'array', element: { kind: 'unknown' }, ...(hasKeys(constraints) && { constraints }) }
+        return {
+          kind: 'array',
+          element: { kind: 'unknown' },
+          ...(hasKeys(constraints) && { constraints }),
+        }
       }
       return {
         kind: 'array',
@@ -115,14 +128,17 @@ function parseTypeBox(schema: unknown): IntrospectedNode {
 function parseObject(schema: Record<string | symbol, unknown>): IntrospectedNode {
   const properties = isObject(schema.properties) ? schema.properties : undefined
   const required = new Set(
-    Array.isArray(schema.required) ? schema.required.filter((key): key is string => typeof key === 'string') : [],
+    Array.isArray(schema.required)
+      ? schema.required.filter((key): key is string => typeof key === 'string')
+      : [],
   )
   const entries: Record<string, IntrospectedNode> = {}
 
   for (const [key, value] of Object.entries(properties ?? {})) {
     const child = parseTypeBox(value as Record<string | symbol, unknown>)
     const optional = isOptional(value) || !required.has(key)
-    entries[key] = optional && child.kind !== 'optional' ? { kind: 'optional', inner: child } : child
+    entries[key] =
+      optional && child.kind !== 'optional' ? { kind: 'optional', inner: child } : child
   }
 
   if (Object.keys(entries).length > 0 || properties !== undefined) {
@@ -142,7 +158,8 @@ function parseObject(schema: Record<string | symbol, unknown>): IntrospectedNode
 
 function stringConstraints(schema: Record<string | symbol, unknown>): StringConstraints {
   const constraints: StringConstraints = {}
-  if (typeof schema.format === 'string') constraints.format = schema.format === 'date-time' ? 'datetime' : schema.format
+  if (typeof schema.format === 'string')
+    constraints.format = schema.format === 'date-time' ? 'datetime' : schema.format
   if (typeof schema.minLength === 'number') constraints.minLength = schema.minLength
   if (typeof schema.maxLength === 'number') constraints.maxLength = schema.maxLength
   if (typeof schema.pattern === 'string') constraints.pattern = new RegExp(schema.pattern)
@@ -175,7 +192,9 @@ function arrayConstraints(schema: Record<string | symbol, unknown>): ArrayConstr
   return constraints
 }
 
-function cloneWithoutKind(schema: Record<string | symbol, unknown>): Record<string | symbol, unknown> {
+function cloneWithoutKind(
+  schema: Record<string | symbol, unknown>,
+): Record<string | symbol, unknown> {
   const clone: Record<string | symbol, unknown> = {}
   for (const key of Reflect.ownKeys(schema)) {
     if (typeof key === 'symbol' && key.toString() === TYPEBOX_KIND) continue

@@ -14,11 +14,13 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [1 — Core engine](#phase-1--core-engine--standard-schema-introspection) | Seeded `generate()` over Standard Schema | 🟢 Done |
 | [2 — Type coverage](#phase-2--rich-type--constraint-coverage) | Full type & constraint support | 🟢 Done |
 | [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🟢 Done |
-| [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🔵 Planned |
+| [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🟢 Done |
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🔵 Planned |
 | [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🔵 Planned |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
+
+Current branch status: phases 0-4 are implemented in `src/` and covered by tests. Phase 5 is the next open implementation track.
 
 ---
 
@@ -116,12 +118,12 @@ Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
 **Deliverables:** `generateRelational` with foreign-key resolution and deterministic, referentially-intact linking.
 
-- [ ] `generateRelational(schemas, { counts, relations, seed })`
-- [ ] Parse `relations` mapping `"child.field": "parent.field"`
-- [ ] Generate parents first, then assign child FKs from real parent keys
-- [ ] Guarantee referential integrity (every FK resolves)
-- [ ] Deterministic linking under a fixed seed
-- [ ] Tests asserting integrity and determinism
+- [x] `generateRelational(schemas, { counts, relations, seed })`
+- [x] Parse `relations` mapping `"child.field": "parent.field"`
+- [x] Generate parents first, then assign child FKs from real parent keys
+- [x] Guarantee referential integrity (every FK resolves)
+- [x] Deterministic linking under a fixed seed
+- [x] Tests asserting integrity and determinism
 
 **Exit criteria:** Generated children always reference existing parent keys; integrity and determinism asserted in tests.
 
@@ -151,7 +153,7 @@ Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
 **Goal:** Ship a documented, releasable `1.0.0`.
 
-**Scope:** Final DX polish, the remaining roadmap feature, and release plumbing.
+**Scope:** Final DX polish and release plumbing after the core feature set is complete.
 
 **Deliverables:** API docs, examples, custom field generators, release workflow, and a published package.
 

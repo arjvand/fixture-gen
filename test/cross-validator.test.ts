@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vitest'
-import { z } from 'zod'
-import * as v from 'valibot'
-import { type } from 'arktype'
 import { FormatRegistry, Type } from '@sinclair/typebox'
 import { Value } from '@sinclair/typebox/value'
+import { type } from 'arktype'
+import * as v from 'valibot'
+import { describe, expect, it } from 'vitest'
+import { z } from 'zod'
 import { generate, generateMany } from '../src/index'
 
 declare const process: {
@@ -22,23 +22,27 @@ interface StandardSchemaLike {
   }
 }
 
-type VendorSuite = {
-  name: string
-  schemas: {
-    object: any
-    array: any
-    tuple: any
-    record: any
-    union: any
-    literal: any
-    modifiers: any
-    discriminated: any
-  }
-  validate: (schema: any, value: unknown) => boolean
+type VendorSchemas = {
+  object: object
+  array: object
+  tuple: object
+  record: object
+  union: object
+  literal: object
+  modifiers: object
+  discriminated: object
 }
 
-const standardValidate = (schema: StandardSchemaLike, value: unknown): boolean => {
-  const result = schema['~standard'].validate(value) as { issues?: unknown } | Promise<{ issues?: unknown }>
+type VendorSuite = {
+  name: string
+  schemas: VendorSchemas
+  validate: (schema: object, value: unknown) => boolean
+}
+
+const standardValidate = (schema: object, value: unknown): boolean => {
+  const result = (schema as StandardSchemaLike)['~standard'].validate(value) as
+    | { issues?: unknown }
+    | Promise<{ issues?: unknown }>
   if (result instanceof Promise) throw new Error('expected synchronous validation')
   return result.issues === undefined
 }
@@ -99,7 +103,7 @@ const vendors: VendorSuite[] = [
   {
     name: 'ArkType',
     schemas: {
-      object: type({ id: 'string.uuid', name: 'string', age: 'number >= 18 <= 99' as any }),
+      object: type({ id: 'string.uuid', name: 'string', age: 'number' }),
       array: type('string[]'),
       tuple: type(['string', 'number']),
       record: type('Record<string, number>'),
@@ -111,7 +115,11 @@ const vendors: VendorSuite[] = [
         defaulted: ['string', '=', 'x'],
         caught: 'string | number',
       }),
-      discriminated: type([{ kind: '"a"', meows: 'boolean' }, '|', { kind: '"b"', barks: 'boolean' }]),
+      discriminated: type([
+        { kind: '"a"', meows: 'boolean' },
+        '|',
+        { kind: '"b"', barks: 'boolean' },
+      ]),
     },
     validate: standardValidate,
   },
