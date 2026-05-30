@@ -20,7 +20,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-Current branch status: phases 0-5 are implemented in `src/` and covered by tests/smoke checks. Phase 6 is now in progress with DX/docs, custom generators, examples, and release workflow work landed.
+Current branch status: phases 0-5 are implemented in `src/` and covered by tests/smoke checks. Phase 6 is now in progress with DX/docs, custom generators, examples, and tagged-release publishing wired into GitHub Actions.
 
 ---
 
@@ -160,7 +160,7 @@ Current branch status: phases 0-5 are implemented in `src/` and covered by tests
 - [x] TSDoc on the public API; generate API reference
 - [x] Runnable examples (per validator + relational)
 - [x] Custom field generators (the README FAQ roadmap item)
-- [x] Set up release workflow
+- [x] Set up release workflow and npm publish automation
 - [ ] Wire up real README badges (npm, CI, bundle size)
 - [ ] Publish `1.0.0` to npm
 
