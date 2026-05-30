@@ -15,12 +15,31 @@ export function generateBuiltinValue(
   const prng = createPrng(deriveSeed(seed, path.join('.')))
 
   switch (node.kind) {
-    case 'string':
+    case 'string': {
+      if (scenario === 'boundary-min') {
+        if (node.constraints?.pattern) return generateFromPattern(node.constraints.pattern, prng)
+        if (node.constraints?.format) return generateString(node.constraints, prng)
+        return prng.string(node.constraints?.minLength ?? 0)
+      }
       return generateString(node.constraints, prng)
-    case 'number':
+    }
+    case 'number': {
+      if (scenario === 'boundary-min') {
+        const c = node.constraints
+        if (c?.min !== undefined) return c.minInclusive === false ? c.min + 1e-9 : c.min
+        return 0
+      }
       return generateNumber(node.constraints, prng)
-    case 'integer':
+    }
+    case 'integer': {
+      if (scenario === 'boundary-min') {
+        const c = node.constraints
+        if (c?.min !== undefined)
+          return c.minInclusive === false ? Math.floor(c.min) + 1 : Math.ceil(c.min)
+        return 0
+      }
       return generateInteger(node.constraints, prng)
+    }
     case 'boolean':
       return prng.bool()
     case 'date':
@@ -35,6 +54,12 @@ export function generateBuiltinValue(
     }
     case 'array': {
       if (scenario === 'empty-state') return []
+      if (scenario === 'boundary-min') {
+        const length = node.constraints?.minLength ?? 0
+        return Array.from({ length }, (_, index) =>
+          generateChild(node.element, [...path, String(index)]),
+        )
+      }
       const min = node.constraints?.minLength ?? 1
       const max = node.constraints?.maxLength ?? Math.max(min, 3)
       const length = prng.int(min, max)
