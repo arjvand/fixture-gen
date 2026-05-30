@@ -12,7 +12,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | :--- | :--- | :--- |
 | [0 — Scaffolding](#phase-0--project-scaffolding) | Buildable, testable, CI-backed repo | 🟢 Done |
 | [1 — Core engine](#phase-1--core-engine--standard-schema-introspection) | Seeded `generate()` over Standard Schema | 🟢 Done |
-| [2 — Type coverage](#phase-2--rich-type--constraint-coverage) | Full type & constraint support | 🔵 Planned |
+| [2 — Type coverage](#phase-2--rich-type--constraint-coverage) | Full type & constraint support | 🟢 Done |
 | [3 — Cross-validator](#phase-3--cross-validator-compatibility) | Zod / Valibot / ArkType / TypeBox parity | 🔵 Planned |
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🔵 Planned |
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🔵 Planned |
@@ -73,14 +73,14 @@ Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
 **Deliverables:** Composite type support, constraint-aware generation, `generateMany`, and per-field `overrides`.
 
-- [ ] Composite types: nested objects, arrays, tuples, records
-- [ ] Modifiers: optional, nullable, default, catch
-- [ ] Unions, discriminated unions, enums, literals
-- [ ] Constraint-aware values: `min`/`max`, length, integer/positive, regex patterns
-- [ ] String formats: uuid, email, url, datetime, ip, etc.
-- [ ] `generateMany(schema, count, options?)`
-- [ ] `overrides` to pin specific field values
-- [ ] Expand the round-trip validation suite across the full type matrix
+- [x] Composite types: nested objects, arrays, tuples, records
+- [x] Modifiers: optional, nullable, default, catch
+- [x] Unions, discriminated unions, enums, literals
+- [x] Constraint-aware values: `min`/`max`, length, integer/positive, regex patterns
+- [x] String formats: uuid, email, url, datetime, ip, etc.
+- [x] `generateMany(schema, count, options?)`
+- [x] `overrides` to pin specific field values
+- [x] Expand the round-trip validation suite across the full type matrix
 
 **Exit criteria:** Generated data validates across the supported type/constraint matrix; `generateMany` and `overrides` covered by tests.
 
