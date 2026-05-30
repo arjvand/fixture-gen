@@ -443,6 +443,11 @@ function generateNumber(constraints: NumberConstraints | undefined, prng: Prng):
         ? constraints.max - 1e-9
         : constraints.max
       : lo + 1000
+  if (lo > hi) {
+    throw new Error(
+      `fixture-gen: contradictory number constraints — min (${constraints?.min}) is greater than max (${constraints?.max}). No valid value can be generated.`,
+    )
+  }
   return lo + prng.next() * (hi - lo)
 }
 
@@ -459,5 +464,10 @@ function generateInteger(constraints: NumberConstraints | undefined, prng: Prng)
         ? Math.ceil(constraints.max) - 1
         : Math.floor(constraints.max)
       : lo + 1000
+  if (lo > hi) {
+    throw new Error(
+      `fixture-gen: contradictory integer constraints — min (${constraints?.min}) is greater than max (${constraints?.max}). No valid value can be generated.`,
+    )
+  }
   return prng.int(lo, hi)
 }

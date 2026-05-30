@@ -101,6 +101,22 @@ describe('generate — number constraints', () => {
   })
 })
 
+describe('generate — contradictory numeric constraints', () => {
+  it('throws a descriptive error for number min > max', () => {
+    const schema = z.number().min(100).max(10)
+    expect(() => generate(schema, { seed: 1 })).toThrowError(
+      /contradictory number constraints/,
+    )
+  })
+
+  it('throws a descriptive error for integer min > max', () => {
+    const schema = z.number().int().min(100).max(10)
+    expect(() => generate(schema, { seed: 1 })).toThrowError(
+      /contradictory integer constraints/,
+    )
+  })
+})
+
 describe('generate — regex pattern constraints', () => {
   it('phone number pattern validates', () => {
     const schema = z.object({ phone: z.string().regex(/^\d{3}-\d{3}-\d{4}$/) })
