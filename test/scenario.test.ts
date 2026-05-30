@@ -101,3 +101,47 @@ describe("scenario: 'boundary-min'", () => {
     expect(result.bio).not.toBeUndefined()
   })
 })
+
+describe("scenario: 'boundary-max'", () => {
+  it('integer is at its maximum constraint', () => {
+    const schema = z.object({ age: z.number().int().min(18).max(100) })
+    const result = generate(schema, { scenario: 'boundary-max' }) as { age: number }
+    expect(result.age).toBe(100)
+  })
+
+  it('integer with no max defaults to min+1000', () => {
+    const schema = z.object({ count: z.number().int() })
+    const result = generate(schema, { scenario: 'boundary-max' }) as { count: number }
+    expect(result.count).toBe(1000) // default: 0 + 1000
+  })
+
+  it('number is at its maximum constraint', () => {
+    const schema = z.object({ score: z.number().min(1.5).max(10) })
+    const result = generate(schema, { scenario: 'boundary-max' }) as { score: number }
+    expect(result.score).toBe(10)
+  })
+
+  it('string is at its maximum length', () => {
+    const schema = z.object({ code: z.string().min(3).max(8) })
+    const result = generate(schema, { scenario: 'boundary-max' }) as { code: string }
+    expect(result.code.length).toBe(8)
+  })
+
+  it('string with no max uses default max (12)', () => {
+    const schema = z.object({ note: z.string() })
+    const result = generate(schema, { scenario: 'boundary-max' }) as { note: string }
+    expect(result.note.length).toBe(12)
+  })
+
+  it('array is at its maximum length', () => {
+    const schema = z.object({ items: z.array(z.string()).min(2).max(5) })
+    const result = generate(schema, { scenario: 'boundary-max' }) as { items: string[] }
+    expect(result.items.length).toBe(5)
+  })
+
+  it('array with no max uses default max (3)', () => {
+    const schema = z.object({ tags: z.array(z.string()) })
+    const result = generate(schema, { scenario: 'boundary-max' }) as { tags: string[] }
+    expect(result.tags.length).toBe(3)
+  })
+})

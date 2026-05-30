@@ -21,6 +21,13 @@ export function generateBuiltinValue(
         if (node.constraints?.format) return generateString(node.constraints, prng)
         return prng.string(node.constraints?.minLength ?? 0)
       }
+      if (scenario === 'boundary-max') {
+        if (node.constraints?.pattern) return generateFromPattern(node.constraints.pattern, prng)
+        if (node.constraints?.format) return generateString(node.constraints, prng)
+        const min = node.constraints?.minLength ?? 4
+        const len = node.constraints?.maxLength ?? Math.max(min, 12)
+        return prng.string(len)
+      }
       return generateString(node.constraints, prng)
     }
     case 'number': {
@@ -28,6 +35,12 @@ export function generateBuiltinValue(
         const c = node.constraints
         if (c?.min !== undefined) return c.minInclusive === false ? c.min + 1e-9 : c.min
         return 0
+      }
+      if (scenario === 'boundary-max') {
+        const c = node.constraints
+        const lo = c?.min !== undefined ? (c.minInclusive === false ? c.min + 1e-9 : c.min) : 0
+        if (c?.max !== undefined) return c.maxInclusive === false ? c.max - 1e-9 : c.max
+        return lo + 1000
       }
       return generateNumber(node.constraints, prng)
     }
@@ -37,6 +50,18 @@ export function generateBuiltinValue(
         if (c?.min !== undefined)
           return c.minInclusive === false ? Math.floor(c.min) + 1 : Math.ceil(c.min)
         return 0
+      }
+      if (scenario === 'boundary-max') {
+        const c = node.constraints
+        const lo =
+          c?.min !== undefined
+            ? c.minInclusive === false
+              ? Math.floor(c.min) + 1
+              : Math.ceil(c.min)
+            : 0
+        if (c?.max !== undefined)
+          return c.maxInclusive === false ? Math.ceil(c.max) - 1 : Math.floor(c.max)
+        return lo + 1000
       }
       return generateInteger(node.constraints, prng)
     }
@@ -56,6 +81,13 @@ export function generateBuiltinValue(
       if (scenario === 'empty-state') return []
       if (scenario === 'boundary-min') {
         const length = node.constraints?.minLength ?? 0
+        return Array.from({ length }, (_, index) =>
+          generateChild(node.element, [...path, String(index)]),
+        )
+      }
+      if (scenario === 'boundary-max') {
+        const min = node.constraints?.minLength ?? 1
+        const length = node.constraints?.maxLength ?? Math.max(min, 3)
         return Array.from({ length }, (_, index) =>
           generateChild(node.element, [...path, String(index)]),
         )
