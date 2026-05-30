@@ -5,6 +5,22 @@
   "type": "module",
   "license": "MIT",
   "author": "Alireza Arjvand",
+  "keywords": [
+    "fixture",
+    "test-fixtures",
+    "mock",
+    "mock-data",
+    "faker",
+    "deterministic",
+    "standard-schema",
+    "zod",
+    "valibot",
+    "arktype",
+    "typebox",
+    "testing",
+    "vitest",
+    "jest"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/arjvand/fixture-gen"

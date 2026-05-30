@@ -7,11 +7,24 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/arjvand/fixture-gen/ci.yml)](https://github.com/arjvand/fixture-gen/actions)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
 
-Instead of random mock data, `fixture-gen` turns your schemas into reproducible, scenario-aware test assets — the kind of thing that belongs in version control alongside your types. Change a type, regenerate fixtures, see exactly what broke.
+Generate realistic, validating mock data from your existing schemas — no adapter code, no manual factories.
 
-The [Standard Schema](https://standardschema.dev) initiative unified the validation layer: frameworks can now accept Zod, Valibot, or ArkType through a single interface. But **fixture and mock generators never caught up** — `zod-fixture` is welded to Zod, and switching validators means rewriting your test data layer from scratch.
+✅ **Deterministic** — same seed → same output, every run, every machine  
+✅ **Schema-driven** — works with Zod, Valibot, ArkType, TypeBox out of the box  
+✅ **Zero boilerplate** — pass your schema; get back valid data  
+✅ **Nestable & relational** — objects, arrays, and cross-table FK linking  
+✅ **Overrideable** — pin specific fields without rebuilding the whole fixture  
 
-`fixture-gen` reads any Standard Schema-compliant object and produces realistic, **deterministic** output — no adapters, no per-library glue. Point it at your existing schemas and get fixtures.
+```ts
+// Before: hand-written, brittle, out of sync with your schema
+const user = { id: 'abc', name: 'John', email: 'john@example.com', role: 'admin' }
+
+// After: always valid, always in sync
+const user = generate(UserSchema)
+const admin = generate(UserSchema, { overrides: { role: 'admin' } })
+```
+
+The [Standard Schema](https://standardschema.dev) initiative unified the validation layer so frameworks can accept Zod, Valibot, or ArkType through one interface. `fixture-gen` extends that to fixtures: point it at any Standard Schema-compliant object and get reproducible, constraint-aware test data — no per-library glue needed.
 
 ## Features
 
@@ -88,6 +101,57 @@ import { generate } from 'fixture-gen'
 const User = type({ id: 'string.uuid', name: 'string' })
 
 const user = generate(User, { seed: 42 }) // ✅ works the same
+```
+
+## Real-world usage
+
+### React component test (Vitest + Testing Library)
+
+```ts
+import { render, screen } from '@testing-library/react'
+import { generate } from 'fixture-gen'
+import { UserSchema } from './schemas'
+import { UserCard } from './UserCard'
+
+test('renders user name', () => {
+  const user = generate(UserSchema, { seed: 1 })
+  render(<UserCard user={user} />)
+  expect(screen.getByText(user.name)).toBeInTheDocument()
+})
+```
+
+### API handler test
+
+```ts
+import { generate } from 'fixture-gen'
+import { UserSchema } from './schemas'
+import { createUser } from './api'
+
+test('creates a user', async () => {
+  const payload = generate(UserSchema, { seed: 1 })
+  const result = await createUser(payload)
+  expect(result.id).toBeDefined()
+})
+```
+
+### Storybook story
+
+```ts
+import { generate } from 'fixture-gen'
+import { UserSchema } from './schemas'
+import { UserCard } from './UserCard'
+
+export const Default = {
+  args: {
+    user: generate(UserSchema, { seed: 1 }),
+  },
+}
+
+export const Admin = {
+  args: {
+    user: generate(UserSchema, { seed: 1, overrides: { role: 'admin' } }),
+  },
+}
 ```
 
 ## Deterministic generation
@@ -299,17 +363,18 @@ afterEach(() => clearScenarios())
 
 ## Comparison
 
-| | **fixture-gen** | `zod-fixture` / `@anatine/zod-mock` | `faker.js` |
-| --- | :---: | :---: | :---: |
-| Schema-agnostic | ✅ | ❌ (Zod only) | ➖ (no schema layer) |
-| Standard Schema native | ✅ | ❌ | ❌ |
-| Seeded determinism | ✅ | ➖ varies | ✅ |
-| Relational / FK generation | ✅ | ❌ | ❌ (manual) |
-| Maps schema → mock automatically | ✅ | ✅ (Zod) | ❌ (write it yourself) |
-| Runtime dependencies | none | Zod | none |
-| Named scenarios (happy-path, etc.) | ✅ | ❌ | ❌ |
-| CLI + drift detection | 🔵 Phase 8 | ❌ | ❌ |
-| JSON Schema / OpenAPI import-export | 🔵 Phase 10 | ❌ | ❌ |
+| | **fixture-gen** | `zod-fixture` / `@anatine/zod-mock` | `faker.js` | `fast-check` | `test-data-bot` |
+| --- | :---: | :---: | :---: | :---: | :---: |
+| Schema-agnostic | ✅ | ❌ (Zod only) | ➖ (no schema layer) | ❌ | ❌ |
+| Standard Schema native | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Seeded determinism | ✅ | ➖ varies | ✅ | ✅ | ❌ |
+| Relational / FK generation | ✅ | ❌ | ❌ (manual) | ❌ | ❌ |
+| Maps schema → mock automatically | ✅ | ✅ (Zod) | ❌ (write it yourself) | ❌ (write arbitraries) | ❌ (write factories) |
+| Field overrides | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Runtime dependencies | none | Zod | none | none | none |
+| Named scenarios (happy-path, etc.) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| CLI + drift detection | 🔵 Phase 8 | ❌ | ❌ | ❌ | ❌ |
+| JSON Schema / OpenAPI import-export | 🔵 Phase 10 | ❌ | ❌ | ❌ | ❌ |
 
 🔵 = planned — see [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
