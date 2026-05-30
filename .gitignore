@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+*.log
+.DS_Store
+.idea
+.vscode
+*.tsbuildinfo
+
+# Local agent/CLI tooling
+.antigravitycli
+.claude
