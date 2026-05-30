@@ -45,3 +45,25 @@ export function registerScenario(name: string, entry: ScenarioEntry): void {
 export function clearScenarios(): void {
   registry.clear()
 }
+
+/**
+ * Register a named scenario for use with `generate({ scenario: name })`.
+ *
+ * Pass an overrides object (merged over the generated value) or a factory
+ * function (receives the full generated value, returns the replacement).
+ * Include `extends` in an overrides object to inherit from a base scenario.
+ */
+export function defineScenario<T = unknown>(
+  name: string,
+  input: (Partial<T> & { extends?: ScenarioName }) | ((value: T) => T),
+): void {
+  if (typeof input === 'function') {
+    registerScenario(name, { factory: input as (value: unknown) => unknown })
+  } else {
+    const { extends: base, ...overrides } = input as Record<string, unknown>
+    registerScenario(name, {
+      extends: base as string | undefined,
+      overrides,
+    })
+  }
+}

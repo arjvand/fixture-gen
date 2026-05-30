@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { generate } from '../src/generate'
+import { clearScenarios, defineScenario } from '../src/scenario'
 
 describe('scenario option — type acceptance', () => {
   it('accepts a built-in scenario name without error', () => {
@@ -8,9 +9,11 @@ describe('scenario option — type acceptance', () => {
     expect(() => generate(schema, { scenario: 'happy-path' })).not.toThrow()
   })
 
-  it('accepts any string as scenario name without error', () => {
+  it('accepts a registered custom scenario name without error', () => {
     const schema = z.object({ name: z.string() })
+    defineScenario('my-custom', { name: 'test' })
     expect(() => generate(schema, { scenario: 'my-custom' })).not.toThrow()
+    clearScenarios()
   })
 })
 
@@ -188,5 +191,33 @@ describe("scenario: 'missing-subtree'", () => {
     const result = generate(schema, { scenario: 'missing-subtree' }) as { name: string }
     expect(result).not.toBeNull()
     expect(typeof result.name).toBe('string')
+  })
+})
+
+describe('defineScenario — overrides object', () => {
+  afterEach(() => clearScenarios())
+
+  it('generates the base value then merges overrides', () => {
+    const schema = z.object({ name: z.string(), role: z.string() })
+    defineScenario('admin-user', { role: 'admin' })
+    const result = generate(schema, { scenario: 'admin-user' }) as {
+      name: string
+      role: string
+    }
+    expect(result.role).toBe('admin')
+    expect(typeof result.name).toBe('string')
+  })
+
+  it('throws on unknown scenario', () => {
+    const schema = z.object({ name: z.string() })
+    expect(() => generate(schema, { scenario: 'does-not-exist' })).toThrow(
+      'unknown scenario "does-not-exist"',
+    )
+  })
+
+  it('throws when trying to redefine a built-in scenario', () => {
+    expect(() => defineScenario('happy-path', { name: 'test' })).toThrow(
+      'cannot redefine built-in scenario "happy-path"',
+    )
   })
 })

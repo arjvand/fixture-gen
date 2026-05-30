@@ -7,6 +7,7 @@ import {
 import { generateBuiltinValue } from './generators'
 import { introspect } from './introspect'
 import type { IntrospectedNode } from './introspect'
+import { isBuiltinScenario, resolveUserScenario } from './scenario'
 import type { ScenarioName } from './scenario'
 import type { InferOutput, StandardSchemaV1 } from './standard'
 
@@ -35,6 +36,23 @@ export function generate(schema: object, options: GenerateOptions = {}): unknown
 }
 
 function generateInternal(schema: object, options: GenerateOptions = {}): unknown {
+  const { scenario } = options
+
+  if (scenario && !isBuiltinScenario(scenario)) {
+    const def = resolveUserScenario(scenario)
+    if (!def) {
+      throw new Error(`fixture-gen: unknown scenario "${scenario}"`)
+    }
+    const baseOptions: GenerateOptions = { ...options, scenario: def.extends }
+    const value = generateInternal(schema, baseOptions)
+
+    if (def.factory) return def.factory(value)
+    if (def.overrides && typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      return { ...(value as Record<string, unknown>), ...def.overrides }
+    }
+    return value
+  }
+
   const node = introspect(schema)
   const seed = options.seed ?? 0
   const value = generateNode(node, seed, [], options)
