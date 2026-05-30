@@ -17,10 +17,15 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [4 — Relational](#phase-4--relational-generation) | `generateRelational` with FK integrity | 🟢 Done |
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🟢 Done |
 | [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🟢 Done |
+| [7 — Scenarios](#phase-7--scenario-first-generation) | Named test-case generation | 🔵 Planned |
+| [8 — CLI & workflow](#phase-8--cli--workflow-tooling) | Drift detection, watch, CI integration | 🔵 Planned |
+| [9 — Advanced constraints](#phase-9--advanced-constraint-engine) | Uniqueness, cross-field rules, business hooks | 🔵 Planned |
+| [10 — JSON Schema bridge](#phase-10--json-schema--openapi-bridge) | OpenAPI / JSON Schema import-export | 🔵 Planned |
+| [11 — Ecosystem plugins](#phase-11--ecosystem-plugins) | Vitest / Jest / Playwright / DB adapters | 🔵 Planned |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-Current branch status: All phases (0-6) are fully implemented, tested, and published to npm with automated CI/CD and working status badges.
+**Current status:** Phases 0–6 are complete and published as `fixture-gen@1.0.0`. Phases 7–11 chart the post-1.0 roadmap toward the fixture compiler vision: scenario-aware generation, CLI workflow tooling, JSON Schema bridging, advanced constraints, and ecosystem plugins.
 
 ---
 
@@ -170,11 +175,111 @@ Current branch status: All phases (0-6) are fully implemented, tested, and publi
 
 ## Backlog / future ideas
 
-- Locale-aware / faker-style value providers
+Items below are tracked here before they are promoted into a numbered phase. Once scoped and sequenced, each moves into its own phase above.
+
+- Locale-aware / faker-style value providers (name, address, phone)
 - Schema-wide custom generator hooks (beyond per-field `overrides`)
-- CLI for generating fixtures to JSON/stdout
 - Performance benchmarks vs `zod-fixture` and faker-based setups
-- Pluggable persistence (seed a DB / ORM directly from relational output)
+
+---
+
+## Phase 7 — Scenario-first generation
+
+**Goal:** Let callers generate named, intent-bearing test cases instead of anonymous random data.
+
+**Scope:** New `scenario` option on existing entry points plus a scenario-definition API. Depends on Phase 2 (constraint engine) and Phase 4 (relational).
+
+**Deliverables:** Built-in scenario catalogue, `defineScenario` for user-defined cases, and scenario propagation through `generateMany` / `generateRelational`.
+
+- [ ] Add `scenario` option to `generate(schema, { scenario, seed })`
+- [ ] Built-in scenarios: `'happy-path'` (valid, representative), `'empty-state'` (all optionals absent, arrays empty), `'boundary-min'` (all constraints at lower bound), `'boundary-max'` (all constraints at upper bound), `'invalid'` (intentionally fails schema — useful for error-path tests), `'missing-subtree'` (required nested object absent)
+- [ ] `defineScenario(name, overrides | factory)` for project-specific cases
+- [ ] Scenario inheritance: `defineScenario('my-case', { extends: 'happy-path', … })`
+- [ ] Propagate scenario through `generateMany` and `generateRelational`
+- [ ] Document each built-in scenario with examples in `docs/scenarios.md`
+
+**Exit criteria:** `generate(schema, { scenario: 'boundary-min' })` always produces a value at the minimum boundary; `defineScenario` lets users register named cases; all scenarios covered by round-trip validation tests.
+
+---
+
+## Phase 8 — CLI & workflow tooling
+
+**Goal:** Own the fixture workflow, not just the library call — make `fixture-gen` a first-class CI tool.
+
+**Scope:** A standalone `fixture-gen` CLI and a drift-detection pipeline. No new generation features; the CLI shells out to the same engine.
+
+**Deliverables:** `fixture-gen` binary, snapshot persistence, drift detection, and a watch mode.
+
+- [ ] `fixture-gen generate <schema-file> [--scenario] [--seed] [--out]` — write fixture JSON to stdout or a file
+- [ ] `fixture-gen snapshot <schema-file> [--dir fixtures/]` — write or refresh named snapshots on disk
+- [ ] `fixture-gen diff <schema-file>` — compare current engine output against stored snapshots; exit non-zero on drift (CI-friendly)
+- [ ] `fixture-gen watch <schema-file>` — re-run on schema change; print diff of what changed
+- [ ] `--format json | jsonl | ts` output modes
+- [ ] Structured JSON diff output (machine-readable, for PR comment bots)
+- [ ] README section: "CLI quick-start" with install + common workflows
+- [ ] Document CI integration pattern (add `fixture-gen diff` to the test step)
+
+**Exit criteria:** `fixture-gen diff` exits non-zero when a schema change would alter fixture output; `fixture-gen watch` reprints changed fields on save; a CI example workflow is documented.
+
+---
+
+## Phase 9 — Advanced constraint engine
+
+**Goal:** Guarantee invariants that span multiple fields and records — the gap between "type-aware" and "constraint-aware."
+
+**Scope:** Extends Phase 2 (field constraints) and Phase 4 (relational) with cross-field and cross-record rules. No public API surface changes beyond new options.
+
+**Deliverables:** Uniqueness guarantees, conditional constraints, and user-supplied business-rule hooks.
+
+- [ ] `unique: true` on array-item schemas → deduplicated generated sets
+- [ ] Schema-wide uniqueness: ensure a field value is unique across all records in `generateMany` (e.g. unique email per user)
+- [ ] Conditional constraints: `refine` / `when` hooks that receive the partial object and return additional field constraints
+- [ ] Business-rule hooks: `generateRelational({ rules: [fn] })` — post-generation validators that can mutate or reject records
+- [ ] Boundary scenario integration: `boundary-min` / `boundary-max` use refined constraints, not just raw schema min/max
+- [ ] Tests asserting uniqueness across 1 000-record `generateMany` runs
+- [ ] Docs: "Advanced constraints" guide
+
+**Exit criteria:** `generateMany(schema, 1000, { unique: ['email'] })` produces 1 000 records with distinct email values; business-rule hooks can enforce cross-field invariants.
+
+---
+
+## Phase 10 — JSON Schema & OpenAPI bridge
+
+**Goal:** Make `fixture-gen` the bridge between TypeScript types, JSON Schema, and AI-friendly contracts — sit in the middle of backend, frontend, and AI workflows.
+
+**Scope:** New entry points that accept JSON Schema objects and OpenAPI `components/schemas` blocks. Complements (not replaces) the existing Standard Schema path.
+
+**Deliverables:** `generateFromJsonSchema`, `generateFromOpenApi`, and a JSON Schema export for any Standard Schema.
+
+- [ ] `generateFromJsonSchema(schema: JSONSchema, opts?)` — generate a fixture directly from a JSON Schema object
+- [ ] `generateFromOpenApi(spec, schemaName, opts?)` — accept a parsed OpenAPI 3.x document and a component name
+- [ ] `toJsonSchema(standardSchema)` — export a Standard Schema as JSON Schema (delegates to Zod's `.toJSONSchema()` where available, otherwise infers)
+- [ ] Scenario support passes through to both new entry points
+- [ ] README section: "Using with OpenAPI / JSON Schema" with a fetch-spec-then-generate example
+- [ ] Structured output contract example: "Generate test fixtures for an AI function-call response schema"
+
+**Exit criteria:** `generateFromJsonSchema({ type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] })` returns a validating fixture; `generateFromOpenApi` resolves `$ref` across components.
+
+---
+
+## Phase 11 — Ecosystem plugins
+
+**Goal:** Integrate into the tools TypeScript teams already use rather than asking them to call the API directly.
+
+**Scope:** Thin adapter packages that delegate to the core engine. Each plugin is a separate npm package under the `@fixture-gen/` scope.
+
+**Deliverables:** Vitest plugin, Jest plugin, Playwright fixtures helper, and a DB seeding adapter.
+
+- [ ] `@fixture-gen/vitest` — `fixtureFactory(schema, opts)` returns a Vitest `beforeEach`-compatible factory with automatic seed reset per test
+- [ ] `@fixture-gen/jest` — same pattern, Jest lifecycle hooks
+- [ ] `@fixture-gen/playwright` — Playwright fixtures integration: `test.extend({ user: fixtureFactory(UserSchema) })`
+- [ ] `@fixture-gen/db` — `seedDatabase(orm, relationalFixture)` adapter with Prisma and Drizzle targets
+- [ ] Monorepo setup: `packages/` with shared `tsconfig` and changesets for independent versioning
+- [ ] Each plugin has its own README and a working example in `examples/`
+
+**Exit criteria:** A Vitest test can import `{ fixtureFactory } from '@fixture-gen/vitest'` and receive a fresh seeded fixture per test; the Prisma DB adapter can seed a test database from `generateRelational` output.
+
+---
 
 ## Contributing
 

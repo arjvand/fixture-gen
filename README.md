@@ -1,15 +1,17 @@
 # fixture-gen
 
-> Schema-agnostic, deterministic test fixtures for any [Standard Schema](https://standardschema.dev) validator — Zod, Valibot, ArkType, TypeBox, and more.
+> The deterministic fixture compiler for TypeScript teams who want realistic, invariant-safe test data from contracts.
 
 [![npm version](https://img.shields.io/npm/v/fixture-gen.svg)](https://www.npmjs.com/package/fixture-gen)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/fixture-gen)](https://bundlephobia.com/package/fixture-gen)
 [![CI](https://img.shields.io/github/actions/workflow/status/arjvand/fixture-gen/ci.yml)](https://github.com/arjvand/fixture-gen/actions)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
 
+Instead of random mock data, `fixture-gen` turns your schemas into reproducible, scenario-aware test assets — the kind of thing that belongs in version control alongside your types. Change a type, regenerate fixtures, see exactly what broke.
+
 The [Standard Schema](https://standardschema.dev) initiative unified the validation layer: frameworks can now accept Zod, Valibot, or ArkType through a single interface. But **fixture and mock generators never caught up** — `zod-fixture` is welded to Zod, and switching validators means rewriting your test data layer from scratch.
 
-`fixture-gen` reads any Standard Schema-compliant object and produces realistic, **deterministic** mock data — no adapters, no per-library glue. Point it at your existing schemas and get fixtures.
+`fixture-gen` reads any Standard Schema-compliant object and produces realistic, **deterministic** output — no adapters, no per-library glue. Point it at your existing schemas and get fixtures.
 
 ## Features
 
@@ -19,6 +21,14 @@ The [Standard Schema](https://standardschema.dev) initiative unified the validat
 - **🧰 Custom generators** — pin exact fields with `overrides`, or compute field and schema-wide values with deterministic hooks.
 - **🪶 Minimal runtime** — pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge runtimes.
 - **🧩 Fully typed** — output is inferred from your schema, so fixtures match the types you already validate against.
+
+**Planned** (see [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full post-1.0 plan):
+
+- **🎭 Scenario-first** _(Phase 7)_ — generate named cases: `happy-path`, `empty-state`, `boundary-min`, `boundary-max`, `invalid`, `missing-subtree`
+- **🛠 CLI + drift detection** _(Phase 8)_ — `fixture-gen diff` exits non-zero when schema changes alter fixture output; CI-ready watch mode and snapshot management
+- **🔒 Advanced constraints** _(Phase 9)_ — schema-wide uniqueness, cross-field invariants, and business-rule hooks across `generateMany` / `generateRelational`
+- **🌐 JSON Schema & OpenAPI bridge** _(Phase 10)_ — import OpenAPI specs, export Standard Schemas as JSON Schema, bridge AI structured-output contracts
+- **🔧 Ecosystem plugins** _(Phase 11)_ — `@fixture-gen/vitest`, `@fixture-gen/jest`, `@fixture-gen/playwright`, `@fixture-gen/db` (Prisma + Drizzle)
 
 ## Install
 
@@ -237,6 +247,11 @@ interface RelationalOptions<S> {
 | Relational / FK generation | ✅ | ❌ | ❌ (manual) |
 | Maps schema → mock automatically | ✅ | ✅ (Zod) | ❌ (write it yourself) |
 | Runtime dependencies | none | Zod | none |
+| Named scenarios (happy-path, etc.) | 🔵 Phase 7 | ❌ | ❌ |
+| CLI + drift detection | 🔵 Phase 8 | ❌ | ❌ |
+| JSON Schema / OpenAPI import-export | 🔵 Phase 10 | ❌ | ❌ |
+
+🔵 = planned — see [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
 ## Supported runtimes
 
