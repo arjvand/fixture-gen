@@ -5,6 +5,10 @@
   "type": "module",
   "license": "MIT",
   "author": "Alireza Arjvand",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arjvand/fixture-gen"
+  },
   "sideEffects": false,
   "engines": {
     "node": ">=18"
