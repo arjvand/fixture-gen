@@ -3,6 +3,10 @@ import { z } from 'zod'
 import { generate, generateMany } from '../src/generate'
 import { clearScenarios, defineScenario } from '../src/scenario'
 import { generateRelational } from '../src/relational'
+import {
+  defineScenario as defineScenarioFromIndex,
+  clearScenarios as clearFromIndex,
+} from '../src/index'
 
 describe('scenario option — type acceptance', () => {
   it('accepts a built-in scenario name without error', () => {
@@ -276,6 +280,30 @@ describe('scenario propagation', () => {
     for (const post of result.posts) {
       expect(post.items).toEqual([])
     }
+  })
+})
+
+describe('public exports', () => {
+  it('defineScenario is exported from the package index', () => {
+    expect(typeof defineScenarioFromIndex).toBe('function')
+  })
+
+  it('clearScenarios is exported from the package index', () => {
+    expect(typeof clearFromIndex).toBe('function')
+  })
+})
+
+describe("scenario: 'happy-path'", () => {
+  it('generates a value that passes schema validation', () => {
+    const schema = z.object({
+      id: z.string().uuid(),
+      name: z.string().min(1),
+      age: z.number().int().min(0).max(120),
+    })
+    const result = generate(schema, { scenario: 'happy-path' })
+    const validation = schema['~standard'].validate(result)
+    if (validation instanceof Promise) throw new Error('expected sync')
+    expect(validation.issues).toBeUndefined()
   })
 })
 
