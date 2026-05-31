@@ -40,6 +40,9 @@
     }
   },
   "files": ["dist"],
+  "bin": {
+    "fixture-gen": "./dist/cli.js"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
