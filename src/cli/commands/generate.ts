@@ -1,9 +1,9 @@
-import { parseArgs } from 'node:util'
 import { writeFileSync } from 'node:fs'
+import { parseArgs } from 'node:util'
 import { generate } from '../../generate'
-import { loadSchema } from '../loader'
-import { formatOutput, type Format } from '../formatter'
 import type { ScenarioName } from '../../scenario'
+import { type Format, formatOutput } from '../formatter'
+import { loadSchema } from '../loader'
 
 export interface CommandResult {
   output: string

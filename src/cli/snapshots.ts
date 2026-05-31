@@ -14,5 +14,5 @@ export function readSnapshot(filePath: string): unknown {
 
 export function writeSnapshot(filePath: string, value: unknown): void {
   mkdirSync(dirname(filePath), { recursive: true })
-  writeFileSync(filePath, JSON.stringify(value, null, 2) + '\n')
+  writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`)
 }

@@ -1,9 +1,9 @@
 import { watch } from 'node:fs'
 import { parseArgs } from 'node:util'
 import { generate } from '../../generate'
-import { loadSchema } from '../loader'
-import { computeDiff, formatDiffHuman, hasDrift } from '../diff'
 import type { ScenarioName } from '../../scenario'
+import { computeDiff, formatDiffHuman, hasDrift } from '../diff'
+import { loadSchema } from '../loader'
 
 export async function runWatch(argv: string[]): Promise<void> {
   const { values, positionals } = parseArgs({
@@ -38,11 +38,11 @@ export async function runWatch(argv: string[]): Promise<void> {
       const current = generate(schema, opts)
       const diff = computeDiff(previous, current)
       if (hasDrift(diff)) {
-        process.stdout.write(formatDiffHuman(diff) + '\n')
+        process.stdout.write(`${formatDiffHuman(diff)}\n`)
         previous = current
       }
     } catch (err) {
-      process.stderr.write(String(err instanceof Error ? err.message : err) + '\n')
+      process.stderr.write(`${err instanceof Error ? err.message : String(err)}\n`)
     }
   })
 }

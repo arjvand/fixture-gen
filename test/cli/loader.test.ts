@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
 import { resolve } from 'node:path'
+import { describe, expect, it } from 'vitest'
 import { loadSchema } from '../../src/cli/loader'
 
 describe('loadSchema', () => {
@@ -11,7 +11,7 @@ describe('loadSchema', () => {
 
   it('returns the default export as the schema', async () => {
     const schema = await loadSchema(resolve('test/cli/fixtures/simple.js'))
-    expect((schema as any)['~standard']).toBeDefined()
+    expect((schema as Record<string, unknown>)['~standard']).toBeDefined()
   })
 
   it('throws if file has no default or schema export', async () => {

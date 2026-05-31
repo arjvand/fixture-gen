@@ -1,8 +1,8 @@
 import { parseArgs } from 'node:util'
 import { generate } from '../../generate'
+import type { ScenarioName } from '../../scenario'
 import { loadSchema } from '../loader'
 import { snapshotPath, writeSnapshot } from '../snapshots'
-import type { ScenarioName } from '../../scenario'
 import type { CommandResult } from './generate'
 
 export async function runSnapshot(argv: string[]): Promise<CommandResult> {

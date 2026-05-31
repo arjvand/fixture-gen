@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { resolve, join } from 'node:path'
-import { mkdirSync, rmSync, existsSync, readFileSync, readdirSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { runDiff } from '../../src/cli/commands/diff'
 import { runGenerate } from '../../src/cli/commands/generate'
 import { runSnapshot } from '../../src/cli/commands/snapshot'
-import { runDiff } from '../../src/cli/commands/diff'
 import { runWatch } from '../../src/cli/commands/watch'
 import { snapshotPath, writeSnapshot } from '../../src/cli/snapshots'
 
@@ -89,7 +89,8 @@ describe('snapshot command', () => {
   it('snapshot file contains valid JSON matching generate output', async () => {
     await runSnapshot([SIMPLE_SCHEMA, '--dir', tmpDir, '--seed', '7'])
     const files = readdirSync(tmpDir)
-    const content = JSON.parse(readFileSync(join(tmpDir, files[0]!), 'utf8'))
+    const firstFile = files[0] ?? ''
+    const content = JSON.parse(readFileSync(join(tmpDir, firstFile), 'utf8'))
     const { output } = await runGenerate([SIMPLE_SCHEMA, '--seed', '7'])
     expect(content).toEqual(JSON.parse(output))
   })

@@ -18,14 +18,14 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [5 — Runtime hardening](#phase-5--runtime--footprint-hardening) | Multi-runtime, zero deps, size budget | 🟢 Done |
 | [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🟢 Done |
 | [7 — Scenarios](#phase-7--scenario-first-generation) | Named test-case generation | 🟢 Done |
-| [8 — CLI & workflow](#phase-8--cli--workflow-tooling) | Drift detection, watch, CI integration | 🔵 Planned |
+| [8 — CLI & workflow](#phase-8--cli--workflow-tooling) | Drift detection, watch, CI integration | 🟢 Done |
 | [9 — Advanced constraints](#phase-9--advanced-constraint-engine) | Uniqueness, cross-field rules, business hooks | 🔵 Planned |
 | [10 — JSON Schema bridge](#phase-10--json-schema--openapi-bridge) | OpenAPI / JSON Schema import-export | 🔵 Planned |
 | [11 — Ecosystem plugins](#phase-11--ecosystem-plugins) | Vitest / Jest / Playwright / DB adapters | 🔵 Planned |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-**Current status:** Phases 0–7 are complete and published as `fixture-gen@1.1.0`. Phases 8–11 chart the post-1.1 roadmap toward the fixture compiler vision: CLI workflow tooling, advanced constraints, JSON Schema bridging, and ecosystem plugins.
+**Current status:** Phases 0–8 are complete and published as `fixture-gen@1.1.0`. Phases 9–11 chart the post-1.1 roadmap toward the fixture compiler vision: advanced constraints, JSON Schema bridging, and ecosystem plugins.
 
 ---
 
@@ -210,14 +210,14 @@ Items below are tracked here before they are promoted into a numbered phase. Onc
 
 **Deliverables:** `fixture-gen` binary, snapshot persistence, drift detection, and a watch mode.
 
-- [ ] `fixture-gen generate <schema-file> [--scenario] [--seed] [--out]` — write fixture JSON to stdout or a file
-- [ ] `fixture-gen snapshot <schema-file> [--dir fixtures/]` — write or refresh named snapshots on disk
-- [ ] `fixture-gen diff <schema-file>` — compare current engine output against stored snapshots; exit non-zero on drift (CI-friendly)
-- [ ] `fixture-gen watch <schema-file>` — re-run on schema change; print diff of what changed
-- [ ] `--format json | jsonl | ts` output modes
-- [ ] Structured JSON diff output (machine-readable, for PR comment bots)
-- [ ] README section: "CLI quick-start" with install + common workflows
-- [ ] Document CI integration pattern (add `fixture-gen diff` to the test step)
+- [x] `fixture-gen generate <schema-file> [--scenario] [--seed] [--out]` — write fixture JSON to stdout or a file
+- [x] `fixture-gen snapshot <schema-file> [--dir fixtures/]` — write or refresh named snapshots on disk
+- [x] `fixture-gen diff <schema-file>` — compare current engine output against stored snapshots; exit non-zero on drift (CI-friendly)
+- [x] `fixture-gen watch <schema-file>` — re-run on schema change; print diff of what changed
+- [x] `--format json | jsonl | ts` output modes
+- [x] Structured JSON diff output (machine-readable, for PR comment bots)
+- [x] README section: "CLI quick-start" with install + common workflows
+- [x] Document CI integration pattern (add `fixture-gen diff` to the test step)
 
 **Exit criteria:** `fixture-gen diff` exits non-zero when a schema change would alter fixture output; `fixture-gen watch` reprints changed fields on save; a CI example workflow is documented.
 

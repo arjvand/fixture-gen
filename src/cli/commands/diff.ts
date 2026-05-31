@@ -1,9 +1,9 @@
 import { parseArgs } from 'node:util'
 import { generate } from '../../generate'
-import { loadSchema } from '../loader'
-import { snapshotPath, readSnapshot } from '../snapshots'
-import { computeDiff, formatDiffHuman, hasDrift } from '../diff'
 import type { ScenarioName } from '../../scenario'
+import { computeDiff, formatDiffHuman, hasDrift } from '../diff'
+import { loadSchema } from '../loader'
+import { readSnapshot, snapshotPath } from '../snapshots'
 import type { CommandResult } from './generate'
 
 export async function runDiff(argv: string[]): Promise<CommandResult> {
