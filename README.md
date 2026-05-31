@@ -382,6 +382,93 @@ afterEach(() => clearScenarios())
 
 Node.js · Bun · Deno · edge runtimes (Cloudflare Workers, Vercel Edge, etc.). Ships ESM with type definitions; no native bindings.
 
+## CLI quick-start
+
+### Install
+
+```bash
+npm install -D fixture-gen
+# or globally:
+npm install -g fixture-gen
+```
+
+### Commands
+
+**Generate a fixture to stdout:**
+
+```bash
+fixture-gen generate path/to/schema.js --seed 42
+fixture-gen generate path/to/schema.js --format ts --out fixtures/user.ts
+```
+
+**Save a snapshot to disk (for drift detection):**
+
+```bash
+fixture-gen snapshot path/to/schema.js --dir fixtures/ --seed 42
+```
+
+**Detect fixture drift:**
+
+```bash
+fixture-gen diff path/to/schema.js --dir fixtures/ --seed 42
+# exits 0 if output matches snapshot, 1 if drift detected
+
+# Machine-readable JSON diff (for PR bots):
+fixture-gen diff path/to/schema.js --dir fixtures/ --format json
+```
+
+**Watch for schema changes during development:**
+
+```bash
+fixture-gen watch path/to/schema.js --seed 42
+# prints changed fields as you save the schema file
+```
+
+### Output formats
+
+| Flag | Output |
+|------|--------|
+| `--format json` | Pretty-printed JSON (default) |
+| `--format jsonl` | Single-line JSON (for piping) |
+| `--format ts` | `export const fixture = {...} as const` |
+
+### Schema file format
+
+The CLI expects a `.js` or `.mjs` file exporting a Standard Schema validator as its `default` export:
+
+```js
+// schemas/user.js
+import { z } from 'zod'
+export default z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string().email(),
+})
+```
+
+> **TypeScript schemas:** Compile with `tsc` first, or run the CLI via `tsx` / `bun`:
+> `bunx fixture-gen generate schemas/user.ts --seed 1`
+
+### CI integration — drift detection
+
+Add fixture drift detection to your CI pipeline so schema changes that silently alter fixture shape are caught before merge:
+
+```yaml
+# .github/workflows/ci.yml
+- name: Check fixture drift
+  run: |
+    fixture-gen diff schemas/user.js --dir fixtures/ --seed 0
+    fixture-gen diff schemas/post.js --dir fixtures/ --seed 0
+```
+
+When a schema changes in a way that alters generated output, `fixture-gen diff` exits non-zero and prints what changed. Update the stored snapshot intentionally with `fixture-gen snapshot` and commit the updated `.json` files to document the change.
+
+**Full example workflow:**
+
+1. Commit: `fixture-gen snapshot schemas/user.js --dir fixtures/` → commit `fixtures/user-default-seed0.json`
+2. CI: `fixture-gen diff schemas/user.js --dir fixtures/` runs on every PR
+3. Schema change detected: CI fails, developer runs `fixture-gen diff` locally to review, updates snapshot, commits
+
 ## FAQ
 
 **Does it support custom field generators?**
