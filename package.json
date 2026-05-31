@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/arjvand/fixture-gen"
+    "url": "git+https://github.com/arjvand/fixture-gen.git"
   },
   "sideEffects": false,
   "engines": {
@@ -39,9 +39,11 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "bin": {
-    "fixture-gen": "./dist/cli.js"
+    "fixture-gen": "dist/cli.js"
   },
   "scripts": {
     "build": "tsup",
