@@ -25,7 +25,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-**Current status:** Phases 0–8 are complete and published as `fixture-gen@1.1.0`. Phases 9–11 chart the post-1.1 roadmap toward the fixture compiler vision: advanced constraints, JSON Schema bridging, and ecosystem plugins.
+**Current status:** Phases 0–8 are complete and published as `fixture-gen@1.2.0`. Phases 9–11 chart the post-1.2 roadmap toward the fixture compiler vision: advanced constraints, JSON Schema bridging, and ecosystem plugins.
 
 ---
 

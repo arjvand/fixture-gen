@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **Introspection reality:** the `~standard` interface carries *no schema structure* at runtime (only `vendor`/`validate`/type-level `types`). Structure is recovered by a centralized, **`~standard.vendor`-keyed** introspection layer that reads each validator's internals (validators stay devDeps only). Unknown vendors / opaque nodes fall back to a constraint-satisfying placeholder verified via `~standard.validate`.
 
-**Current state: Phase 6 (DX, docs & 1.0 release) completed.** `generate(schema, { seed })` produces deterministic, validating output for the supported validator matrix: Zod, Valibot, ArkType, and TypeBox. `generateMany` and `generateRelational` are also covered. The full stable API is specified in `README.md`, and the ordered build plan in `docs/ROADMAP.md`. `fixture-gen` is published to npm at version `1.0.0`.
+**Current state: Phase 8 (CLI & workflow tooling) completed.** `generate(schema, { seed })` produces deterministic, validating output for Zod, Valibot, ArkType, and TypeBox. `generateMany`, `generateRelational`, and scenario-first generation are also covered. A standalone `fixture-gen` CLI ships with `generate`, `snapshot`, `diff`, and `watch` subcommands for drift detection and CI integration. The full stable API is specified in `README.md`, and the ordered build plan in `docs/ROADMAP.md`. `fixture-gen` is published to npm at version `1.2.0`.
 
 ## Commands
 
