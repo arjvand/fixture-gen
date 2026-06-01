@@ -32,7 +32,7 @@ describe('array uniqueItems — TypeBox', () => {
 describe('array uniqueItems — Zod Set', () => {
   it('z.set() generates an array-like result with unique items', () => {
     const schema = z.set(z.string().min(2).max(6))
-    const result = generate(schema) as unknown[]
+    const result = generate(schema) as unknown as unknown[]
     expect(Array.isArray(result)).toBe(true)
     expect(new Set(result).size).toBe(result.length)
   })
@@ -154,7 +154,7 @@ describe('generate — refine hook', () => {
       seed: 1,
       unique: ['email'],
       refine: () => ({ role: 'user' as const }),
-    })
+    }) as Array<{ email: string; role: string }>
     const emails = records.map((r) => r.email)
     expect(new Set(emails).size).toBe(20)
     for (const r of records) expect(r.role).toBe('user')
