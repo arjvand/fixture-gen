@@ -173,9 +173,10 @@ function generateManyInternal(
   const seen = new Map<string, Set<string>>()
   for (const p of uniquePaths) seen.set(p, new Set())
 
+  const UNIQUE_RETRY_MULTIPLIER = 20
   const results: unknown[] = []
   let attempt = 0
-  const maxAttempts = count * 20
+  const maxAttempts = count * UNIQUE_RETRY_MULTIPLIER
 
   while (results.length < count) {
     if (attempt >= maxAttempts) {
