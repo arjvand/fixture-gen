@@ -117,15 +117,16 @@ describe('generate — refine hook', () => {
   })
 
   it('enforces stockCount=0 when inStock=false', () => {
+    // Use overrides to guarantee inStock=false so the refine assertion always runs
     const record = generate(ProductSchema, {
       seed: 5,
+      overrides: { inStock: false },
       refine: (r) => {
         if (!r.inStock) return { stockCount: 0 }
       },
     })
-    if (!record.inStock) {
-      expect(record.stockCount).toBe(0)
-    }
+    expect(record.inStock).toBe(false)
+    expect(record.stockCount).toBe(0)
   })
 
   it('refine hook returning void leaves record unchanged', () => {
