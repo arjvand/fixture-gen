@@ -19,7 +19,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [6 — 1.0 release](#phase-6--dx-docs--10-release) | Docs, custom generators, publish | 🟢 Done |
 | [7 — Scenarios](#phase-7--scenario-first-generation) | Named test-case generation | 🟢 Done |
 | [8 — CLI & workflow](#phase-8--cli--workflow-tooling) | Drift detection, watch, CI integration | 🟢 Done |
-| [9 — Advanced constraints](#phase-9--advanced-constraint-engine) | Uniqueness, cross-field rules, business hooks | 🔵 Planned |
+| [9 — Advanced constraints](#phase-9--advanced-constraint-engine) | Uniqueness, cross-field rules, business hooks | 🟢 Done |
 | [10 — JSON Schema bridge](#phase-10--json-schema--openapi-bridge) | OpenAPI / JSON Schema import-export | 🔵 Planned |
 | [11 — Ecosystem plugins](#phase-11--ecosystem-plugins) | Vitest / Jest / Playwright / DB adapters | 🔵 Planned |
 
@@ -231,15 +231,15 @@ Items below are tracked here before they are promoted into a numbered phase. Onc
 
 **Deliverables:** Uniqueness guarantees, conditional constraints, and user-supplied business-rule hooks.
 
-- [ ] `unique: true` on array-item schemas → deduplicated generated sets
-- [ ] Schema-wide uniqueness: ensure a field value is unique across all records in `generateMany` (e.g. unique email per user)
-- [ ] Conditional constraints: `refine` / `when` hooks that receive the partial object and return additional field constraints
-- [ ] Business-rule hooks: `generateRelational({ rules: [fn] })` — post-generation validators that can mutate or reject records
-- [ ] Boundary scenario integration: `boundary-min` / `boundary-max` use refined constraints, not just raw schema min/max
-- [ ] Tests asserting uniqueness across 1 000-record `generateMany` runs
-- [ ] Docs: "Advanced constraints" guide
+- [x] `unique: true` on array-item schemas → deduplicated generated sets
+- [x] Schema-wide uniqueness: ensure a field value is unique across all records in `generateMany` (e.g. unique email per user)
+- [x] Conditional constraints: `refine` / `when` hooks that receive the partial object and return additional field constraints
+- [x] Business-rule hooks: `generateRelational({ rules: [fn] })` — post-generation validators that can mutate or reject records
+- [x] Boundary scenario integration: `boundary-min` / `boundary-max` use refined constraints, not just raw schema min/max
+- [x] Tests asserting uniqueness across 1 000-record `generateMany` runs
+- [x] Docs: "Advanced constraints" guide
 
-**Exit criteria:** `generateMany(schema, 1000, { unique: ['email'] })` produces 1 000 records with distinct email values; business-rule hooks can enforce cross-field invariants.
+**Exit criteria:** `generateMany(schema, 1000, { unique: ['email'] })` produces 1 000 records with distinct email values; business-rule hooks can enforce cross-field invariants. ✅ Shipped in `1.3.0`.
 
 ---
 

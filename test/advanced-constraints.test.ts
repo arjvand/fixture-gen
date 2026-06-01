@@ -1,6 +1,6 @@
+import { Type } from '@sinclair/typebox'
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { Type } from '@sinclair/typebox'
 import { generate, generateMany, generateRelational } from '../src/index'
 import type { StandardSchemaV1 } from '../src/standard'
 
@@ -197,13 +197,13 @@ describe('generateRelational — rules hooks', () => {
         relations: { 'orders.userId': 'users.id' },
         rules: [
           (tables) => {
-            const orders = tables['orders'] as Array<{ status: string }>
+            const orders = tables.orders as Array<{ status: string }>
             for (const order of orders) order.status = 'paid'
           },
         ],
       },
     )
-    const orders = result['orders'] as Array<{ status: string }>
+    const orders = result.orders as Array<{ status: string }>
     expect(orders.every((o) => o.status === 'paid')).toBe(true)
   })
 
@@ -217,10 +217,8 @@ describe('generateRelational — rules hooks', () => {
         relations: { 'orders.userId': 'users.id' },
         rules: [
           (tables) => {
-            const userIds = new Set(
-              (tables['users'] as Array<{ id: string }>).map((u) => u.id),
-            )
-            const orders = tables['orders'] as Array<{ userId: string }>
+            const userIds = new Set((tables.users as Array<{ id: string }>).map((u) => u.id))
+            const orders = tables.orders as Array<{ userId: string }>
             for (const order of orders) {
               if (!userIds.has(order.userId)) violations++
             }
@@ -228,7 +226,7 @@ describe('generateRelational — rules hooks', () => {
         ],
       },
     )
-    expect(result['orders']).toHaveLength(9)
+    expect(result.orders).toHaveLength(9)
     expect(violations).toBe(0)
   })
 
@@ -248,7 +246,14 @@ describe('generateRelational — rules hooks', () => {
       {
         seed: 1,
         counts: { users: 2 },
-        rules: [() => { calls.push(1) }, () => { calls.push(2) }],
+        rules: [
+          () => {
+            calls.push(1)
+          },
+          () => {
+            calls.push(2)
+          },
+        ],
       },
     )
     expect(calls).toEqual([1, 2])

@@ -11,7 +11,7 @@ import { isBuiltinScenario, resolveUserScenario } from './scenario'
 import type { ScenarioName } from './scenario'
 import type { InferOutput, StandardSchemaV1 } from './standard'
 
-export type RefineHook<T = unknown> = (record: T) => Partial<T> | void
+export type RefineHook<T = unknown> = (record: T) => Partial<T> | undefined
 
 export interface GenerateOptions<T = unknown> {
   /** Seed for deterministic output. Same seed → same data. Defaults to `0`. */
@@ -77,7 +77,12 @@ function generateInternal(
   const node = introspect(schema)
   const seed = options.seed ?? 0
   let result: unknown = generateNode(node, seed, [], options)
-  if (options.overrides && typeof result === 'object' && result !== null && !Array.isArray(result)) {
+  if (
+    options.overrides &&
+    typeof result === 'object' &&
+    result !== null &&
+    !Array.isArray(result)
+  ) {
     result = { ...(result as Record<string, unknown>), ...options.overrides }
   }
   if (options.refine && typeof result === 'object' && result !== null && !Array.isArray(result)) {
