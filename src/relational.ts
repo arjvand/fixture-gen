@@ -4,6 +4,8 @@ import { type IntrospectedNode, introspect } from './introspect'
 import type { ScenarioName } from './scenario'
 import type { InferOutput, StandardSchemaV1 } from './standard'
 
+export type BusinessRuleHook = (tables: Record<string, unknown[]>) => void
+
 export interface RelationalOptions<S extends Record<string, object> = Record<string, object>> {
   /** Seed for deterministic output. Same seed -> same linked record sets. */
   seed?: number
@@ -13,6 +15,11 @@ export interface RelationalOptions<S extends Record<string, object> = Record<str
   relations?: Record<string, string>
   /** Named scenario applied to all tables during generation. */
   scenario?: ScenarioName
+  /**
+   * Post-generation hooks applied to the full row set after FK linking.
+   * Each function may mutate records to enforce cross-table business rules.
+   */
+  rules?: BusinessRuleHook[]
 }
 
 export type RelationalResult<S extends Record<string, StandardSchemaV1>> = {
@@ -280,6 +287,10 @@ export function generateRelational(
       if (relation.parentTable !== table) continue
       applyRelation(rowsByTable, relation, baseSeed)
     }
+  }
+
+  for (const rule of options.rules ?? []) {
+    rule(rowsByTable)
   }
 
   return rowsByTable

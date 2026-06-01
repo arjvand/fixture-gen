@@ -1,6 +1,8 @@
 export { generate, generateMany } from './generate'
 export { generateRelational } from './relational'
 export type { GenerateOptions } from './generate'
+export type { RefineHook } from './generate'
+export type { BusinessRuleHook } from './relational'
 export type { CustomGenerator, GenerateContext } from './custom'
 export type { IntrospectedNode } from './introspect'
 export type { RelationalOptions, RelationalResult } from './relational'
