@@ -82,23 +82,17 @@ export function generateBuiltinValue(
       if (scenario === 'empty-state') return []
       if (scenario === 'boundary-min') {
         const length = node.constraints?.minLength ?? 0
-        return Array.from({ length }, (_, index) =>
-          generateChild(node.element, [...path, String(index)]),
-        )
+        return generateArrayItems(node, length, path, generateChild, node.constraints?.uniqueItems)
       }
       if (scenario === 'boundary-max') {
         const min = node.constraints?.minLength ?? 1
         const length = node.constraints?.maxLength ?? Math.max(min, 3)
-        return Array.from({ length }, (_, index) =>
-          generateChild(node.element, [...path, String(index)]),
-        )
+        return generateArrayItems(node, length, path, generateChild, node.constraints?.uniqueItems)
       }
       const min = node.constraints?.minLength ?? 1
       const max = node.constraints?.maxLength ?? Math.max(min, 3)
       const length = prng.int(min, max)
-      return Array.from({ length }, (_, index) =>
-        generateChild(node.element, [...path, String(index)]),
-      )
+      return generateArrayItems(node, length, path, generateChild, node.constraints?.uniqueItems)
     }
     case 'tuple': {
       const values = node.elements.map((el, index) => generateChild(el, [...path, String(index)]))
@@ -491,6 +485,34 @@ function generateIpv4(prng: Prng): string {
 function generateIpv6(prng: Prng): string {
   const p = () => prng.int(0, 65535).toString(16).padStart(4, '0')
   return `${p()}:${p()}:${p()}:${p()}:${p()}:${p()}:${p()}:${p()}`
+}
+
+function generateArrayItems(
+  node: Extract<IntrospectedNode, { kind: 'array' }>,
+  length: number,
+  path: readonly string[],
+  generateChild: (node: IntrospectedNode, path: readonly string[]) => unknown,
+  uniqueItems?: boolean,
+): unknown[] {
+  if (!uniqueItems) {
+    return Array.from({ length }, (_, index) =>
+      generateChild(node.element, [...path, String(index)]),
+    )
+  }
+  const seen = new Set<string>()
+  const items: unknown[] = []
+  let attempt = 0
+  const maxAttempts = Math.max(length * 10, 50)
+  while (items.length < length && attempt < maxAttempts) {
+    const item = generateChild(node.element, [...path, `_u${attempt}`])
+    const key = JSON.stringify(item)
+    if (!seen.has(key)) {
+      seen.add(key)
+      items.push(item)
+    }
+    attempt++
+  }
+  return items
 }
 
 // ── Number ───────────────────────────────────────────────────────────────────
