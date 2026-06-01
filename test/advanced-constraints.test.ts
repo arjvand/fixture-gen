@@ -16,6 +16,7 @@ describe('array uniqueItems — TypeBox', () => {
   it('generates deduplicated items for uniqueItems:true array', () => {
     const schema = Type.Array(Type.String(), { uniqueItems: true, minItems: 5 })
     const arr = generate(schema) as string[]
+    expect(arr.length).toBeGreaterThanOrEqual(5)
     expect(new Set(arr).size).toBe(arr.length)
   })
 
@@ -59,6 +60,7 @@ describe('generateMany — unique option', () => {
     expect(records).toHaveLength(1000)
     const emails = records.map((r) => (r as { email: string }).email)
     expect(new Set(emails).size).toBe(1000)
+    for (const r of records) expect(validates(UserSchema, r)).toBe(true)
   })
 
   it('produces distinct UUID ids across 100 records', () => {
@@ -144,6 +146,7 @@ describe('generate — refine hook', () => {
         }
       },
     })
+    expect(records).toHaveLength(20)
     for (const r of records) {
       expect(r.discountedPrice).toBeLessThan(r.price)
     }
@@ -205,6 +208,7 @@ describe('generateRelational — rules hooks', () => {
   })
 
   it('rule hook can enforce cross-table invariant', () => {
+    let violations = 0
     const result = generateRelational(
       { users: UserSchema, orders: OrderSchema },
       {
@@ -218,13 +222,14 @@ describe('generateRelational — rules hooks', () => {
             )
             const orders = tables['orders'] as Array<{ userId: string }>
             for (const order of orders) {
-              expect(userIds.has(order.userId)).toBe(true)
+              if (!userIds.has(order.userId)) violations++
             }
           },
         ],
       },
     )
     expect(result['orders']).toHaveLength(9)
+    expect(violations).toBe(0)
   })
 
   it('empty rules array is a no-op', () => {
