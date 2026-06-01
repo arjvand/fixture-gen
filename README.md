@@ -34,12 +34,11 @@ The [Standard Schema](https://standardschema.dev) initiative unified the validat
 - **🧰 Custom generators** — pin exact fields with `overrides`, or compute field and schema-wide values with deterministic hooks.
 - **🪶 Minimal runtime** — pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge runtimes.
 - **🎭 Scenario-first** — named, intent-bearing test cases: `happy-path`, `empty-state`, `boundary-min`, `boundary-max`, `invalid`, `missing-subtree`. Define project-specific cases with `defineScenario`.
+- **🔒 Advanced constraints** — schema-wide uniqueness (`unique: ['email']`), cross-field invariants (`refine`), and business-rule hooks (`rules`) across `generateMany` / `generateRelational`.
 - **🧩 Fully typed** — output is inferred from your schema, so fixtures match the types you already validate against.
 
 **Planned** (see [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full post-1.0 plan):
 
-- **🛠 CLI + drift detection** _(Phase 8)_ — `fixture-gen diff` exits non-zero when schema changes alter fixture output; CI-ready watch mode and snapshot management
-- **🔒 Advanced constraints** _(Phase 9)_ — schema-wide uniqueness, cross-field invariants, and business-rule hooks across `generateMany` / `generateRelational`
 - **🌐 JSON Schema & OpenAPI bridge** _(Phase 10)_ — import OpenAPI specs, export Standard Schemas as JSON Schema, bridge AI structured-output contracts
 - **🔧 Ecosystem plugins** _(Phase 11)_ — `@fixture-gen/vitest`, `@fixture-gen/jest`, `@fixture-gen/playwright`, `@fixture-gen/db` (Prisma + Drizzle)
 
@@ -264,6 +263,85 @@ const { users, posts } = generateRelational(
 // posts.every(p => users.some(u => u.id === p.userId)) === true ✅
 ```
 
+## Advanced constraints
+
+### Cross-record uniqueness
+
+Pass `unique` to `generateMany` to guarantee a field is distinct across every record — no two records share the same value:
+
+```ts
+import { generateMany } from 'fixture-gen'
+
+// 1000 users, no two share an email
+const users = generateMany(UserSchema, 1000, { seed: 42, unique: ['email'] })
+
+// Unique on multiple fields (each is independently unique)
+const users2 = generateMany(UserSchema, 500, { seed: 0, unique: ['id', 'email'] })
+
+// Dot notation for nested paths
+const records = generateMany(schema, 20, { unique: ['user.email'] })
+```
+
+TypeBox arrays marked `uniqueItems: true` and Zod `z.set()` schemas are automatically deduplicated at the item level.
+
+### Cross-field invariants (`refine`)
+
+The `refine` hook runs after each record is generated and may return field overrides to enforce invariants that span multiple fields:
+
+```ts
+import { generate, generateMany } from 'fixture-gen'
+
+const product = generate(ProductSchema, {
+  seed: 1,
+  refine: (r) => {
+    if (r.discountedPrice >= r.price) {
+      return { discountedPrice: r.price * 0.8 }
+    }
+  },
+})
+
+// refine applies to every record in generateMany too
+const products = generateMany(ProductSchema, 100, {
+  seed: 1,
+  refine: (r) => {
+    if (r.discountedPrice >= r.price) return { discountedPrice: r.price * 0.8 }
+  },
+})
+```
+
+`refine` composes with `unique`, `overrides`, `scenario`, and custom `generators`.
+
+### Business-rule hooks (`rules` in `generateRelational`)
+
+Pass a `rules` array to `generateRelational` to enforce cross-table invariants after FK linking:
+
+```ts
+import { generateRelational } from 'fixture-gen'
+
+const { users, invoices } = generateRelational(
+  { users: UserSchema, invoices: InvoiceSchema },
+  {
+    seed: 1,
+    counts: { users: 10, invoices: 50 },
+    relations: { 'invoices.userId': 'users.id' },
+    rules: [
+      (tables) => {
+        const freeIds = new Set(
+          (tables.users as Array<{ id: string; plan: string }>)
+            .filter((u) => u.plan === 'free')
+            .map((u) => u.id),
+        )
+        for (const inv of tables.invoices as Array<{ userId: string; amount: number }>) {
+          if (freeIds.has(inv.userId)) inv.amount = 0
+        }
+      },
+    ],
+  },
+)
+```
+
+See [`docs/advanced-constraints.md`](./docs/advanced-constraints.md) for the full guide.
+
 ## API
 
 Full reference: [docs/API.md](./docs/API.md)
@@ -313,6 +391,10 @@ interface GenerateOptions<T> {
   generator?: CustomGenerator
   /** Named scenario controlling generation behavior. */
   scenario?: BuiltinScenario | string
+  /** Field paths (dot-separated) that must be unique across all generateMany records. */
+  unique?: string[]
+  /** Post-generation hook: return field overrides to enforce cross-field invariants. */
+  refine?: (record: T) => Partial<T> | undefined
 }
 
 interface GenerateContext {
@@ -333,6 +415,8 @@ interface RelationalOptions<S> {
   relations?: Record<string, string>
   /** Named scenario applied to all tables during generation. */
   scenario?: BuiltinScenario | string
+  /** Post-generation hooks: each receives the full row set and may mutate records. */
+  rules?: Array<(tables: Record<string, unknown[]>) => void>
 }
 ```
 
@@ -373,7 +457,8 @@ afterEach(() => clearScenarios())
 | Field overrides | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Runtime dependencies | none | Zod | none | none | none |
 | Named scenarios (happy-path, etc.) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| CLI + drift detection | 🔵 Phase 8 | ❌ | ❌ | ❌ | ❌ |
+| Cross-record uniqueness / refine hooks | ✅ | ❌ | ❌ | ❌ | ❌ |
+| CLI + drift detection | ✅ | ❌ | ❌ | ❌ | ❌ |
 | JSON Schema / OpenAPI import-export | 🔵 Phase 10 | ❌ | ❌ | ❌ | ❌ |
 
 🔵 = planned — see [`docs/ROADMAP.md`](docs/ROADMAP.md)
