@@ -20,6 +20,7 @@ export interface NumberConstraints {
 export interface ArrayConstraints {
   minLength?: number
   maxLength?: number
+  uniqueItems?: boolean
 }
 
 export type IntrospectedNode =

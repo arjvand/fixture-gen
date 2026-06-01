@@ -51,6 +51,8 @@ interface ZodV3Def {
   valueType?: unknown
   minLength?: { value: number } | null
   maxLength?: { value: number } | null
+  minSize?: { value: number } | null
+  maxSize?: { value: number } | null
 }
 
 interface ZodV3 {
@@ -147,6 +149,10 @@ function fromV4(schema: ZodV4): IntrospectedNode {
     case 'any':
     case 'unknown':
       return { kind: 'any' }
+    case 'set': {
+      const element = def.valueType !== undefined ? fromV4(def.valueType as ZodV4) : { kind: 'any' as const }
+      return { kind: 'array', element, constraints: { uniqueItems: true } }
+    }
     default:
       return { kind: 'unknown' }
   }
@@ -294,6 +300,13 @@ function fromV3(schema: ZodV3): IntrospectedNode {
     case 'ZodAny':
     case 'ZodUnknown':
       return { kind: 'any' }
+    case 'ZodSet': {
+      const element = def.valueType !== undefined ? introspectZod(def.valueType) : { kind: 'any' as const }
+      const constraints: ArrayConstraints = { uniqueItems: true }
+      if (def.minSize?.value !== undefined) constraints.minLength = def.minSize.value
+      if (def.maxSize?.value !== undefined) constraints.maxLength = def.maxSize.value
+      return { kind: 'array', element, constraints }
+    }
     default:
       return { kind: 'unknown' }
   }

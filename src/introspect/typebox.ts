@@ -189,6 +189,7 @@ function arrayConstraints(schema: Record<string | symbol, unknown>): ArrayConstr
   const constraints: ArrayConstraints = {}
   if (typeof schema.minItems === 'number') constraints.minLength = schema.minItems
   if (typeof schema.maxItems === 'number') constraints.maxLength = schema.maxItems
+  if (schema.uniqueItems === true) constraints.uniqueItems = true
   return constraints
 }
 
