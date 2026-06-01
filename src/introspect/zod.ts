@@ -150,7 +150,7 @@ function fromV4(schema: ZodV4): IntrospectedNode {
     case 'unknown':
       return { kind: 'any' }
     case 'set': {
-      const element = def.valueType !== undefined ? fromV4(def.valueType as ZodV4) : { kind: 'any' as const }
+      const element = def.valueType !== undefined ? introspectZod(def.valueType) : { kind: 'any' as const }
       return { kind: 'array', element, constraints: { uniqueItems: true } }
     }
     default:
