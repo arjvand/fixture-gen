@@ -512,6 +512,7 @@ function generateArrayItems(
     }
     attempt++
   }
+  // May return fewer than `length` items if the element's value space is too small to satisfy uniqueness within maxAttempts.
   return items
 }
 
