@@ -31,11 +31,11 @@ describe('array uniqueItems — TypeBox', () => {
 })
 
 describe('array uniqueItems — Zod Set', () => {
-  it('z.set() generates an array-like result with unique items', () => {
+  it('z.set() generates a Set instance with unique items', () => {
     const schema = z.set(z.string().min(2).max(6))
-    const result = generate(schema) as unknown as unknown[]
-    expect(Array.isArray(result)).toBe(true)
-    expect(new Set(result).size).toBe(result.length)
+    const result = generate(schema)
+    expect(result instanceof Set).toBe(true)
+    expect(result.size).toBeGreaterThan(0)
   })
 })
 

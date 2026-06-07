@@ -94,6 +94,28 @@ export function generateBuiltinValue(
       const length = prng.int(min, max)
       return generateArrayItems(node, length, path, generateChild, node.constraints?.uniqueItems)
     }
+    case 'set': {
+      if (scenario === 'empty-state') return new Set()
+      if (scenario === 'boundary-min') {
+        const length = node.constraints?.minLength ?? 0
+        return new Set(
+          generateArrayItems(node, length, path, generateChild, node.constraints?.uniqueItems),
+        )
+      }
+      if (scenario === 'boundary-max') {
+        const min = node.constraints?.minLength ?? 1
+        const length = node.constraints?.maxLength ?? Math.max(min, 3)
+        return new Set(
+          generateArrayItems(node, length, path, generateChild, node.constraints?.uniqueItems),
+        )
+      }
+      const min = node.constraints?.minLength ?? 1
+      const max = node.constraints?.maxLength ?? Math.max(min, 3)
+      const length = prng.int(min, max)
+      return new Set(
+        generateArrayItems(node, length, path, generateChild, node.constraints?.uniqueItems),
+      )
+    }
     case 'tuple': {
       const values = node.elements.map((el, index) => generateChild(el, [...path, String(index)]))
       if (node.rest) {
@@ -488,7 +510,7 @@ function generateIpv6(prng: Prng): string {
 }
 
 function generateArrayItems(
-  node: Extract<IntrospectedNode, { kind: 'array' }>,
+  node: Extract<IntrospectedNode, { kind: 'array' }> | Extract<IntrospectedNode, { kind: 'set' }>,
   length: number,
   path: readonly string[],
   generateChild: (node: IntrospectedNode, path: readonly string[]) => unknown,

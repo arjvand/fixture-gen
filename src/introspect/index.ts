@@ -31,6 +31,7 @@ export type IntrospectedNode =
   | { kind: 'date' }
   | { kind: 'object'; entries: Record<string, IntrospectedNode> }
   | { kind: 'array'; element: IntrospectedNode; constraints?: ArrayConstraints }
+  | { kind: 'set'; element: IntrospectedNode; constraints?: ArrayConstraints }
   | { kind: 'tuple'; elements: IntrospectedNode[]; rest?: IntrospectedNode }
   | { kind: 'record'; key: IntrospectedNode; value: IntrospectedNode }
   | { kind: 'optional'; inner: IntrospectedNode }

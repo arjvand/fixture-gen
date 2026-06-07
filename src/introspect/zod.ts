@@ -152,7 +152,7 @@ function fromV4(schema: ZodV4): IntrospectedNode {
     case 'set': {
       const element =
         def.valueType !== undefined ? introspectZod(def.valueType) : { kind: 'any' as const }
-      return { kind: 'array', element, constraints: { uniqueItems: true } }
+      return { kind: 'set', element, constraints: { uniqueItems: true } }
     }
     default:
       return { kind: 'unknown' }
@@ -307,7 +307,7 @@ function fromV3(schema: ZodV3): IntrospectedNode {
       const constraints: ArrayConstraints = { uniqueItems: true }
       if (def.minSize?.value !== undefined) constraints.minLength = def.minSize.value
       if (def.maxSize?.value !== undefined) constraints.maxLength = def.maxSize.value
-      return { kind: 'array', element, constraints }
+      return { kind: 'set', element, constraints }
     }
     default:
       return { kind: 'unknown' }
