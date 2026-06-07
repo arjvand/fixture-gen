@@ -29,13 +29,15 @@ describe("scenario: 'empty-state'", () => {
     expect(result.tags).toEqual([])
   })
 
-  it('optional fields are absent (undefined)', () => {
+  it('optional fields are absent (truly missing, not undefined)', () => {
     const schema = z.object({ name: z.string(), bio: z.string().optional() })
     const result = generate(schema, { scenario: 'empty-state' }) as {
       name: string
       bio?: string
     }
     expect(result.bio).toBeUndefined()
+    expect('bio' in result).toBe(false)
+    expect(Object.keys(result)).not.toContain('bio')
   })
 
   it('nullable fields are null', () => {

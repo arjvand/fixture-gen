@@ -74,7 +74,10 @@ export function generateBuiltinValue(
       const result: Record<string, unknown> = {}
       for (const key of Object.keys(node.entries)) {
         const child = node.entries[key]
-        if (child) result[key] = generateChild(child, [...path, key])
+        if (child) {
+          const value = generateChild(child, [...path, key])
+          if (value !== undefined) result[key] = value
+        }
       }
       return result
     }
