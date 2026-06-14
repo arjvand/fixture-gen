@@ -36,6 +36,12 @@ export interface GenerateOptions<T = unknown> {
   refine?: RefineHook<T>
 }
 
+function stripUndefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  const hasUndefined = Object.values(obj).some((v) => v === undefined)
+  if (!hasUndefined) return obj
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as Partial<T>
+}
+
 /** Generate a single fixture from a Standard Schema. */
 export function generate<S extends StandardSchemaV1>(
   schema: S,
@@ -69,7 +75,7 @@ function generateInternal(
 
     if (def.factory) return def.factory(value)
     if (def.overrides && typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      return { ...(value as Record<string, unknown>), ...def.overrides }
+      return { ...(value as Record<string, unknown>), ...stripUndefined(def.overrides) }
     }
     return value
   }
@@ -83,11 +89,16 @@ function generateInternal(
     result !== null &&
     !Array.isArray(result)
   ) {
-    result = { ...(result as Record<string, unknown>), ...options.overrides }
+    result = {
+      ...(result as Record<string, unknown>),
+      ...stripUndefined(options.overrides as Record<string, unknown>),
+    }
   }
   if (options.refine && typeof result === 'object' && result !== null && !Array.isArray(result)) {
     const refinedOverrides = options.refine(result)
     if (refinedOverrides != null) {
+      // refine is an explicit user hook — returning { key: undefined } is
+      // intentional, so we don't strip undefined values here.
       result = { ...(result as Record<string, unknown>), ...refinedOverrides }
     }
   }

@@ -57,6 +57,26 @@ describe("scenario: 'empty-state'", () => {
     const result = generate(schema, { scenario: 'empty-state' }) as { name: string }
     expect(typeof result.name).toBe('string')
   })
+
+  it('overrides option with undefined values does not add them as own properties', () => {
+    const schema = z.object({ name: z.string(), bio: z.string().optional() })
+    const result = generate(schema, {
+      scenario: 'empty-state',
+      overrides: { bio: undefined },
+    }) as { name: string; bio?: string }
+    expect('bio' in result).toBe(false)
+    expect(Object.keys(result)).not.toContain('bio')
+  })
+
+  it('overrides with undefined values do not clobber generated values (no scenario)', () => {
+    const schema = z.object({ name: z.string(), bio: z.string().optional() })
+    const result = generate(schema, { overrides: { bio: undefined } }) as {
+      name: string
+      bio?: string
+    }
+    expect(typeof result.bio).toBe('string')
+    expect(result.bio).not.toBeUndefined()
+  })
 })
 
 describe("scenario: 'boundary-min'", () => {
@@ -350,5 +370,46 @@ describe('defineScenario — inheritance (extends)', () => {
     defineScenario('zero-count', { count: 0 })
     const result = generate(schema, { scenario: 'zero-count' }) as { count: number }
     expect(result.count).toBe(0)
+  })
+
+  it('inheriting empty-state keeps optional fields absent', () => {
+    const schema = z.object({ name: z.string(), bio: z.string().optional() })
+    defineScenario('empty-extended', { extends: 'empty-state' })
+    const result = generate(schema, { scenario: 'empty-extended' }) as {
+      name: string
+      bio?: string
+    }
+    expect(result.bio).toBeUndefined()
+    expect('bio' in result).toBe(false)
+    expect(Object.keys(result)).not.toContain('bio')
+  })
+
+  it('inheriting empty-state with non-optional overrides keeps optional fields absent', () => {
+    const schema = z.object({
+      name: z.string(),
+      bio: z.string().optional(),
+      tags: z.array(z.string()),
+    })
+    defineScenario('patch-empty', { extends: 'empty-state', tags: ['important'] })
+    const result = generate(schema, { scenario: 'patch-empty' }) as {
+      name: string
+      bio?: string
+      tags: string[]
+    }
+    expect(result.bio).toBeUndefined()
+    expect('bio' in result).toBe(false)
+    expect(result.tags).toEqual(['important'])
+  })
+
+  it('overrides with explicit undefined values do not become own properties', () => {
+    const schema = z.object({ name: z.string(), bio: z.string().optional() })
+    defineScenario('with-undef', { extends: 'empty-state', bio: undefined, name: 'fixed' })
+    const result = generate(schema, { scenario: 'with-undef' }) as {
+      name: string
+      bio?: string
+    }
+    expect(result.name).toBe('fixed')
+    expect('bio' in result).toBe(false)
+    expect(Object.keys(result)).not.toContain('bio')
   })
 })
