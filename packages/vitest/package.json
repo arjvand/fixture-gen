@@ -5,6 +5,10 @@
   "type": "module",
   "license": "MIT",
   "keywords": ["fixture-gen", "vitest", "test-fixtures", "deterministic", "testing"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arjvand/fixture-gen.git"
+  },
   "sideEffects": false,
   "engines": {
     "node": ">=18"
