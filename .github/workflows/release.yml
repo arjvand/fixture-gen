@@ -32,7 +32,7 @@ jobs:
             echo "target=root" >> "$GITHUB_OUTPUT"
             echo "dir=." >> "$GITHUB_OUTPUT"
           elif [[ "$TAG" == @fixture-gen/*@* ]]; then
-            PKG="${TAG%%@*}"
+            PKG="${TAG%@*}"
             echo "target=$PKG" >> "$GITHUB_OUTPUT"
             echo "dir=packages/${PKG#@fixture-gen/}" >> "$GITHUB_OUTPUT"
           fi
