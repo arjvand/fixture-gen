@@ -1,0 +1,34 @@
+{
+  "name": "@fixture-gen/vitest",
+  "version": "0.0.0",
+  "description": "Vitest plugin for fixture-gen — automatic seed-reset per test via fixtureFactory.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["fixture-gen", "vitest", "test-fixtures", "deterministic", "testing"],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fixture-gen": "^1.4.0"
+  },
+  "peerDependencies": {
+    "vitest": ">=1.0.0"
+  }
+}

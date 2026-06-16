@@ -21,11 +21,11 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [8 — CLI & workflow](#phase-8--cli--workflow-tooling) | Drift detection, watch, CI integration | 🟢 Done |
 | [9 — Advanced constraints](#phase-9--advanced-constraint-engine) | Uniqueness, cross-field rules, business hooks | 🟢 Done |
 | [10 — JSON Schema bridge](#phase-10--json-schema--openapi-bridge) | OpenAPI / JSON Schema import-export | 🟢 Done |
-| [11 — Ecosystem plugins](#phase-11--ecosystem-plugins) | Vitest / Jest / Playwright / DB adapters | 🔵 Planned |
+| [11 — Ecosystem plugins](#phase-11--ecosystem-plugins) | Vitest / Jest / Playwright / DB adapters | 🟡 In progress |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-**Current status:** Phases 0–10 are complete and published as `fixture-gen@1.3.2`. Phase 11 charts the post-1.3 roadmap toward the fixture compiler vision: ecosystem plugins.
+**Current status:** Phases 0–10 are complete and published as `fixture-gen@1.3.2`. Phase 11 in progress — `@fixture-gen/vitest` plugin and monorepo setup complete.
 
 ---
 
@@ -270,11 +270,11 @@ Items below are tracked here before they are promoted into a numbered phase. Onc
 
 **Deliverables:** Vitest plugin, Jest plugin, Playwright fixtures helper, and a DB seeding adapter.
 
-- [ ] `@fixture-gen/vitest` — `fixtureFactory(schema, opts)` returns a Vitest `beforeEach`-compatible factory with automatic seed reset per test
+- [x] Monorepo setup: `packages/` with shared `tsconfig` and changesets for independent versioning
+- [x] `@fixture-gen/vitest` — `fixtureFactory(schema, opts)` returns a Vitest `beforeEach`-compatible factory with automatic seed reset per test
 - [ ] `@fixture-gen/jest` — same pattern, Jest lifecycle hooks
 - [ ] `@fixture-gen/playwright` — Playwright fixtures integration: `test.extend({ user: fixtureFactory(UserSchema) })`
 - [ ] `@fixture-gen/db` — `seedDatabase(orm, relationalFixture)` adapter with Prisma and Drizzle targets
-- [ ] Monorepo setup: `packages/` with shared `tsconfig` and changesets for independent versioning
 - [ ] Each plugin has its own README and a working example in `examples/`
 
 **Exit criteria:** A Vitest test can import `{ fixtureFactory } from '@fixture-gen/vitest'` and receive a fresh seeded fixture per test; the Prisma DB adapter can seed a test database from `generateRelational` output.
