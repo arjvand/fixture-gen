@@ -1,30 +1,38 @@
 # fixture-gen
 
-> The deterministic fixture compiler for TypeScript teams who want realistic, invariant-safe test data from contracts.
+> Generate deterministic, schema-valid fixtures from your existing TypeScript validators.
 
 [![npm version](https://img.shields.io/npm/v/fixture-gen.svg)](https://www.npmjs.com/package/fixture-gen)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/fixture-gen)](https://bundlephobia.com/package/fixture-gen)
 [![CI](https://img.shields.io/github/actions/workflow/status/arjvand/fixture-gen/ci.yml)](https://github.com/arjvand/fixture-gen/actions)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
 
-Generate realistic, validating mock data from your existing schemas — no adapter code, no manual factories.
-
-✅ **Deterministic** — same seed → same output, every run, every machine  
-✅ **Schema-driven** — works with Zod, Valibot, ArkType, TypeBox out of the box  
-✅ **Zero boilerplate** — pass your schema; get back valid data  
-✅ **Nestable & relational** — objects, arrays, and cross-table FK linking  
-✅ **Overrideable** — pin specific fields without rebuilding the whole fixture  
+Make tests easier to trust: point `fixture-gen` at a schema and get reproducible data that already satisfies it—no hand-written factories, no adapter code.
 
 ```ts
-// Before: hand-written, brittle, out of sync with your schema
-const user = { id: 'abc', name: 'John', email: 'john@example.com', role: 'admin' }
+// Before: brittle manual fixture that drifts from the schema
+const user = {
+  id: '2b8f1c6e-6f90-4c52-9c83-0d9f2f4cf5c9',
+  name: 'John',
+  email: 'john@example.com',
+  role: 'admin',
+  profile: { avatarUrl: null }, // schema now requires a string
+}
 
-// After: always valid, always in sync
-const user = generate(UserSchema)
-const admin = generate(UserSchema, { overrides: { role: 'admin' } })
+test('shows the admin badge', () => {
+  render(<UserCard user={user} />)
+  expect(screen.getByText('Admin')).toBeInTheDocument()
+})
+
+// After: the same test, with a schema-derived fixture in one line
+test('shows the admin badge', () => {
+  const user = generate(UserSchema, { seed: 42, overrides: { role: 'admin' } })
+  render(<UserCard user={user} />)
+  expect(screen.getByText('Admin')).toBeInTheDocument()
+})
 ```
 
-The [Standard Schema](https://standardschema.dev) initiative unified the validation layer so frameworks can accept Zod, Valibot, or ArkType through one interface. `fixture-gen` extends that to fixtures: point it at any Standard Schema-compliant object and get reproducible, constraint-aware test data — no per-library glue needed.
+Built on Standard Schema, it works with Zod, Valibot, ArkType, and TypeBox through the same API.
 
 ## Features
 
