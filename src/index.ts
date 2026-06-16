@@ -19,4 +19,4 @@ export type { JSONSchema } from './introspect/json-schema'
 export type { OpenAPIObject } from './openapi'
 
 /** Package version marker. */
-export const VERSION = '1.3.2'
+export const VERSION = '1.4.0'
