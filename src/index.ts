@@ -11,5 +11,12 @@ export type { Prng } from './prng'
 export { defineScenario, clearScenarios } from './scenario'
 export type { BuiltinScenario, ScenarioName } from './scenario'
 
+// Phase 10 — JSON Schema & OpenAPI bridge
+export { generateFromJsonSchema } from './json-schema'
+export { generateFromOpenApi } from './openapi'
+export { toJsonSchema } from './to-json-schema'
+export type { JSONSchema } from './introspect/json-schema'
+export type { OpenAPIObject } from './openapi'
+
 /** Package version marker. */
-export const VERSION = '1.2.0'
+export const VERSION = '1.3.2'

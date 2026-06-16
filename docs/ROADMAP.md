@@ -20,12 +20,12 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 | [7 — Scenarios](#phase-7--scenario-first-generation) | Named test-case generation | 🟢 Done |
 | [8 — CLI & workflow](#phase-8--cli--workflow-tooling) | Drift detection, watch, CI integration | 🟢 Done |
 | [9 — Advanced constraints](#phase-9--advanced-constraint-engine) | Uniqueness, cross-field rules, business hooks | 🟢 Done |
-| [10 — JSON Schema bridge](#phase-10--json-schema--openapi-bridge) | OpenAPI / JSON Schema import-export | 🔵 Planned |
+| [10 — JSON Schema bridge](#phase-10--json-schema--openapi-bridge) | OpenAPI / JSON Schema import-export | 🟢 Done |
 | [11 — Ecosystem plugins](#phase-11--ecosystem-plugins) | Vitest / Jest / Playwright / DB adapters | 🔵 Planned |
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-**Current status:** Phases 0–8 are complete and published as `fixture-gen@1.2.0`. Phases 9–11 chart the post-1.2 roadmap toward the fixture compiler vision: advanced constraints, JSON Schema bridging, and ecosystem plugins.
+**Current status:** Phases 0–10 are complete and published as `fixture-gen@1.3.2`. Phase 11 charts the post-1.3 roadmap toward the fixture compiler vision: ecosystem plugins.
 
 ---
 
@@ -251,12 +251,12 @@ Items below are tracked here before they are promoted into a numbered phase. Onc
 
 **Deliverables:** `generateFromJsonSchema`, `generateFromOpenApi`, and a JSON Schema export for any Standard Schema.
 
-- [ ] `generateFromJsonSchema(schema: JSONSchema, opts?)` — generate a fixture directly from a JSON Schema object
-- [ ] `generateFromOpenApi(spec, schemaName, opts?)` — accept a parsed OpenAPI 3.x document and a component name
-- [ ] `toJsonSchema(standardSchema)` — export a Standard Schema as JSON Schema (delegates to Zod's `.toJSONSchema()` where available, otherwise infers)
-- [ ] Scenario support passes through to both new entry points
-- [ ] README section: "Using with OpenAPI / JSON Schema" with a fetch-spec-then-generate example
-- [ ] Structured output contract example: "Generate test fixtures for an AI function-call response schema"
+- [x] `generateFromJsonSchema(schema: JSONSchema, opts?)` — generate a fixture directly from a JSON Schema object
+- [x] `generateFromOpenApi(spec, schemaName, opts?)` — accept a parsed OpenAPI 3.x document and a component name
+- [x] `toJsonSchema(standardSchema)` — export a Standard Schema as JSON Schema (delegates to Zod's `.toJSONSchema()` where available, otherwise infers)
+- [x] Scenario support passes through to both new entry points
+- [x] README section: "Using with OpenAPI / JSON Schema" with a fetch-spec-then-generate example
+- [x] Structured output contract example: "Generate test fixtures for an AI function-call response schema" — see README
 
 **Exit criteria:** `generateFromJsonSchema({ type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] })` returns a validating fixture; `generateFromOpenApi` resolves `$ref` across components.
 

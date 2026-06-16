@@ -1,4 +1,5 @@
 import { introspectArkType } from './arktype'
+import { introspectJsonSchema } from './json-schema'
 import { introspectTypeBox } from './typebox'
 import { introspectValibot } from './valibot'
 import { introspectZod } from './zod'
@@ -64,6 +65,8 @@ export function introspect(schema: unknown): IntrospectedNode {
       return introspectValibot(schema)
     case 'arktype':
       return introspectArkType(schema)
+    case 'json-schema':
+      return introspectJsonSchema(schema)
     default:
       return isTypeBoxSchema(schema) ? introspectTypeBox(schema) : { kind: 'unknown' }
   }
