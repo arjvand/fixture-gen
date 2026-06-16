@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+      - '@fixture-gen/*@*'
 
 jobs:
   release:
@@ -22,14 +23,37 @@ jobs:
 
       - run: npm ci
       - run: npm run check
-      - run: npm run docs:api
 
-      - run: npm publish --provenance --access public
+      - name: Classify tag
+        id: tag
+        run: |
+          TAG="${{ github.ref_name }}"
+          if [[ "$TAG" == v* ]]; then
+            echo "target=root" >> "$GITHUB_OUTPUT"
+            echo "dir=." >> "$GITHUB_OUTPUT"
+          elif [[ "$TAG" == @fixture-gen/*@* ]]; then
+            PKG="${TAG%%@*}"
+            echo "target=$PKG" >> "$GITHUB_OUTPUT"
+            echo "dir=packages/${PKG#@fixture-gen/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish root package
+        if: steps.tag.outputs.target == 'root'
+        run: |
+          npm run docs:api
+          npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - uses: softprops/action-gh-release@v2
+      - name: Publish workspace package
+        if: steps.tag.outputs.target != 'root'
+        working-directory: ${{ steps.tag.outputs.dir }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/**
-            docs/API.md
+            ${{ steps.tag.outputs.dir }}/dist/**

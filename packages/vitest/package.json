@@ -1,6 +1,6 @@
 {
   "name": "@fixture-gen/vitest",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Vitest plugin for fixture-gen — automatic seed-reset per test via fixtureFactory.",
   "type": "module",
   "license": "MIT",
