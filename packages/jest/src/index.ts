@@ -1,6 +1,7 @@
 import { beforeEach } from '@jest/globals'
-import { generate, mergeOverrides } from 'fixture-gen'
+import { generate } from 'fixture-gen'
 import type { GenerateOptions, InferOutput, StandardSchemaV1 } from 'fixture-gen'
+import { mergeOverrides } from './merge-overrides'
 
 export interface FixtureFactory<T> {
   (overrides?: Partial<T>): T
