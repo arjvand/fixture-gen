@@ -1,6 +1,6 @@
 {
   "name": "@fixture-gen/jest",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Jest plugin for fixture-gen — automatic seed-reset per test via fixtureFactory.",
   "type": "module",
   "license": "MIT",
@@ -24,6 +24,9 @@
     }
   },
   "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "test": "NODE_OPTIONS='--experimental-vm-modules' ../../node_modules/.bin/jest",
