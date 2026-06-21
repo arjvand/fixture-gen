@@ -10,3 +10,6 @@ coverage
 # Local agent/CLI tooling
 .antigravitycli
 .claude
+.opencode
+opencode.jsonc
+openspec/
