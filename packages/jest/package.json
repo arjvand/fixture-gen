@@ -1,0 +1,41 @@
+{
+  "name": "@fixture-gen/jest",
+  "version": "0.1.0",
+  "description": "Jest plugin for fixture-gen — automatic seed-reset per test via fixtureFactory.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["fixture-gen", "jest", "test-fixtures", "deterministic", "testing"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arjvand/fixture-gen.git"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' ../../node_modules/.bin/jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fixture-gen": "^1.4.0"
+  },
+  "peerDependencies": {
+    "jest": ">=29.0.0"
+  },
+  "devDependencies": {
+    "ts-jest": "^29.4.11"
+  }
+}
