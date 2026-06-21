@@ -83,14 +83,15 @@ describe('autoReset', () => {
 describe('autoReset behavior', () => {
   const factory = fixtureFactory(UserSchema, { seed: 42 })
   autoReset(factory)
+  let firstResult: User
 
   it('resets the factory seed before the test', () => {
-    const result = factory()
-    expect(result).toBeDefined()
+    firstResult = factory()
+    expect(firstResult).toBeDefined()
   })
 
-  it('factory produces output after autoReset', () => {
+  it('produces identical output after autoReset resets the seed', () => {
     const result = factory()
-    expect(result).toBeDefined()
+    expect(result).toEqual(firstResult)
   })
 })

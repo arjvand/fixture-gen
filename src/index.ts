@@ -18,5 +18,7 @@ export { toJsonSchema } from './to-json-schema'
 export type { JSONSchema } from './introspect/json-schema'
 export type { OpenAPIObject } from './openapi'
 
+export { mergeOverrides } from './merge-overrides'
+
 /** Package version marker. */
 export const VERSION = '1.4.0'

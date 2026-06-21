@@ -1,4 +1,4 @@
-import { generate } from 'fixture-gen'
+import { generate, mergeOverrides } from 'fixture-gen'
 import type { GenerateOptions, InferOutput, StandardSchemaV1 } from 'fixture-gen'
 import { beforeEach } from 'vitest'
 
@@ -17,21 +17,14 @@ export function fixtureFactory(schema: object, options?: GenerateOptions): Fixtu
   const baseSeed = options?.seed ?? 0
   let counter = 0
 
-  const mergeOverrides = (callOverrides: unknown) => {
-    if (callOverrides === undefined)
-      return options?.overrides as Record<string, unknown> | undefined
-    if (!options?.overrides) return callOverrides as Record<string, unknown>
-    return {
-      ...(options.overrides as Record<string, unknown>),
-      ...(callOverrides as Record<string, unknown>),
-    }
-  }
-
   const factory = ((overrides?: Record<string, unknown>): unknown => {
     const result = generate(schema, {
       ...options,
       seed: baseSeed + counter,
-      overrides: mergeOverrides(overrides),
+      overrides: mergeOverrides(
+        options?.overrides as Record<string, unknown> | undefined,
+        overrides,
+      ),
     })
     counter++
     return result
