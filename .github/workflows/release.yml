@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   id-token: write
 
 jobs:
@@ -26,5 +27,5 @@ jobs:
           commit: 'chore: release'
           title: 'chore: release packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
