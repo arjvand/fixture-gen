@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   release:
-    if: contains(github.event.head_commit.message, '[skip ci]') == false && hashFiles('.changeset/*.md') != ''
+    if: contains(github.event.head_commit.message, '[skip ci]') == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,12 +23,25 @@ jobs:
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Check for pending changesets
+        id: check
+        run: |
+          if ls .changeset/*.md 2>/dev/null; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Consume changesets and bump versions
+        if: steps.check.outputs.found == 'true'
         run: npx changeset version
-      - run: npm run build --workspaces --include-workspace-root
+      - name: Build
+        if: steps.check.outputs.found == 'true'
+        run: npm run build --workspaces --include-workspace-root
       - name: Publish to npm
+        if: steps.check.outputs.found == 'true'
         run: npx changeset publish
       - name: Commit version bumps to master
+        if: steps.check.outputs.found == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
