@@ -2,58 +2,30 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
-      - '@fixture-gen/*@*'
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 'lts/*'
           cache: npm
-          registry-url: https://registry.npmjs.org
-
       - run: npm ci
-      - run: npm run check
-
-      - name: Classify tag
-        id: tag
-        run: |
-          TAG="${{ github.ref_name }}"
-          if [[ "$TAG" == v* ]]; then
-            echo "target=root" >> "$GITHUB_OUTPUT"
-            echo "dir=." >> "$GITHUB_OUTPUT"
-          elif [[ "$TAG" == @fixture-gen/*@* ]]; then
-            PKG="${TAG%@*}"
-            echo "target=$PKG" >> "$GITHUB_OUTPUT"
-            echo "dir=packages/${PKG#@fixture-gen/}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Publish root package
-        if: steps.tag.outputs.target == 'root'
-        run: |
-          npm run docs:api
-          npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish workspace package
-        if: steps.tag.outputs.target != 'root'
-        working-directory: ${{ steps.tag.outputs.dir }}
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+      - run: npm run build --workspaces --include-workspace-root
+      - name: Create Release Pull Request or Publish
+        uses: changesets/action@v1
         with:
-          files: |
-            ${{ steps.tag.outputs.dir }}/dist/**
+          publish: npx changeset publish
+          commit: 'chore: release'
+          title: 'chore: release packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
