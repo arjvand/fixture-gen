@@ -1,10 +1,16 @@
 {
   "name": "@fixture-gen/jest",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Jest plugin for fixture-gen — automatic seed-reset per test via fixtureFactory.",
   "type": "module",
   "license": "MIT",
-  "keywords": ["fixture-gen", "jest", "test-fixtures", "deterministic", "testing"],
+  "keywords": [
+    "fixture-gen",
+    "jest",
+    "test-fixtures",
+    "deterministic",
+    "testing"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arjvand/fixture-gen.git"
@@ -23,7 +29,9 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
