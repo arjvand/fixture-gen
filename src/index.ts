@@ -21,4 +21,4 @@ export type { OpenAPIObject } from './openapi'
 export { mergeOverrides } from './merge-overrides'
 
 /** Package version marker. */
-export const VERSION = '1.4.0'
+export const VERSION = '1.4.1'
