@@ -45,9 +45,77 @@ Built on Standard Schema, it works with Zod, Valibot, ArkType, and TypeBox throu
 - **🔒 Advanced constraints** — schema-wide uniqueness (`unique: ['email']`), cross-field invariants (`refine`), and business-rule hooks (`rules`) across `generateMany` / `generateRelational`.
 - **🧩 Fully typed** — output is inferred from your schema, so fixtures match the types you already validate against.
 
-**Planned** (see [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full post-1.0 plan):
+**Ecosystem plugins:**
+- **`@fixture-gen/vitest`** — `fixtureFactory` + `autoReset` for Vitest ([npm](https://www.npmjs.com/package/@fixture-gen/vitest))
+- **`@fixture-gen/jest`** — `fixtureFactory` + `autoReset` for Jest ([npm](https://www.npmjs.com/package/@fixture-gen/jest))
 
-- **🔧 Ecosystem plugins** _(Phase 11)_ — `@fixture-gen/vitest`, `@fixture-gen/jest`, `@fixture-gen/playwright`, `@fixture-gen/db` (Prisma + Drizzle)
+**Planned** (see [`docs/ROADMAP.md`](docs/ROADMAP.md)):
+- `@fixture-gen/playwright`, `@fixture-gen/db` (Prisma + Drizzle)
+
+## Ecosystem
+
+Convenience wrappers that integrate `fixture-gen` directly into your test runner. They add no runtime dependencies to your project — just the tools you already use.
+
+### `@fixture-gen/vitest`
+
+```bash
+npm install --save-dev @fixture-gen/vitest
+```
+
+> Requires `vitest >= 1.0.0` as a peer dependency.
+
+```ts
+import { fixtureFactory, autoReset } from '@fixture-gen/vitest'
+
+const user = fixtureFactory(UserSchema, { seed: 1 })
+autoReset(user) // resets seed before each test
+
+test('first call gets seed 1', () => {
+  const u = user()
+  expect(u.name).toBeTypeOf('string')
+})
+
+test('next test also starts at seed 1', () => {
+  const u = user() // same data as the first test's first call
+  expect(u.name).toBeTypeOf('string')
+})
+```
+
+### `@fixture-gen/jest`
+
+```bash
+npm install --save-dev @fixture-gen/jest
+```
+
+> Requires `jest >= 29.0.0` as a peer dependency.
+
+The API is identical — just import from `@fixture-gen/jest` instead:
+
+```ts
+import { fixtureFactory, autoReset } from '@fixture-gen/jest'
+
+const user = fixtureFactory(UserSchema, { seed: 1 })
+autoReset(user)
+
+beforeEach(() => user.reset()) // or rely on autoReset
+
+test('creates a valid user', () => {
+  const u = user()
+  expect(u.name).toBeTypeOf('string')
+})
+```
+
+### API
+
+`fixtureFactory(schema, options?)` returns a callable `FixtureFactory<T>`:
+
+| Member | Signature | Description |
+|--------|-----------|-------------|
+| `()` | `(overrides?) => T` | Generate a fixture |
+| `.generate()` | `(overrides?) => T` | Same as calling the factory |
+| `.reset()` | `() => void` | Reset internal counter so next call matches the first |
+
+Each call increments a counter added to the base seed, so every call produces different data. `autoReset(factory)` registers a `beforeEach` hook that resets the counter before each test.
 
 ## Install
 
@@ -115,14 +183,22 @@ const user = generate(User, { seed: 42 }) // ✅ works the same
 
 ```ts
 import { render, screen } from '@testing-library/react'
-import { generate } from 'fixture-gen'
+import { fixtureFactory, autoReset } from '@fixture-gen/vitest'
 import { UserSchema } from './schemas'
 import { UserCard } from './UserCard'
 
+const user = fixtureFactory(UserSchema, { seed: 1 })
+autoReset(user)
+
 test('renders user name', () => {
-  const user = generate(UserSchema, { seed: 1 })
-  render(<UserCard user={user} />)
-  expect(screen.getByText(user.name)).toBeInTheDocument()
+  const u = user()
+  render(<UserCard user={u} />)
+  expect(screen.getByText(u.name)).toBeInTheDocument()
+})
+
+test('each test starts with seed 1', () => {
+  const u = user() // same data as the first test
+  expect(u.name).toBeDefined()
 })
 ```
 
