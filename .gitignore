@@ -13,3 +13,6 @@ coverage
 .opencode
 opencode.jsonc
 openspec/
+
+# npm auth token (CI writes this, must never be committed)
+.npmrc

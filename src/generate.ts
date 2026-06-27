@@ -70,13 +70,24 @@ function generateInternal(
     }
     const next = new Set(visited)
     next.add(scenario)
-    const baseOptions: GenerateOptions = { ...options, scenario: def.extends }
-    const value = generateInternal(schema, baseOptions, next)
+    // Recurse without refine — scenario patches must be applied first
+    const baseOptions: GenerateOptions = { ...options, scenario: def.extends, refine: undefined }
+    let value = generateInternal(schema, baseOptions, next)
 
-    if (def.factory) return def.factory(value)
-    if (def.overrides && typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      return { ...(value as Record<string, unknown>), ...stripUndefined(def.overrides) }
+    if (def.factory) {
+      value = def.factory(value)
     }
+    if (def.overrides && typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      value = { ...(value as Record<string, unknown>), ...stripUndefined(def.overrides) }
+    }
+
+    if (options.refine && typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      const refinedOverrides = options.refine(value)
+      if (refinedOverrides != null) {
+        value = { ...(value as Record<string, unknown>), ...refinedOverrides }
+      }
+    }
+
     return value
   }
 

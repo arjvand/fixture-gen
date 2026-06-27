@@ -413,3 +413,92 @@ describe('defineScenario — inheritance (extends)', () => {
     expect(Object.keys(result)).not.toContain('bio')
   })
 })
+
+describe('defineScenario + refine execution order', () => {
+  afterEach(() => clearScenarios())
+
+  it('refine sees scenario overrides applied', () => {
+    const schema = z.object({ role: z.string(), permissions: z.array(z.string()) })
+    defineScenario('admin', { role: 'admin' })
+    const result = generate(schema, {
+      scenario: 'admin',
+      refine: (obj) => ({
+        permissions: obj.role === 'admin' ? ['read', 'write', 'delete'] : ['read'],
+      }),
+    }) as { role: string; permissions: string[] }
+    expect(result.role).toBe('admin')
+    expect(result.permissions).toEqual(['read', 'write', 'delete'])
+  })
+
+  it('refine sees scenario factory output', () => {
+    const schema = z.object({ plan: z.string(), maxUsers: z.number().int() })
+    defineScenario('premium', () => ({ plan: 'premium', maxUsers: 0 }))
+    const result = generate(schema, {
+      scenario: 'premium',
+      refine: (obj) => ({
+        maxUsers: obj.plan === 'premium' ? 100 : 10,
+      }),
+    }) as { plan: string; maxUsers: number }
+    expect(result.plan).toBe('premium')
+    expect(result.maxUsers).toBe(100)
+  })
+
+  it('refine works with extends chain — sees accumulated patches', () => {
+    const schema = z.object({ role: z.string(), level: z.number().int(), label: z.string() })
+    defineScenario('base-user', { role: 'user', level: 1 })
+    defineScenario('vip-user', { extends: 'base-user', level: 2 })
+    const result = generate(schema, {
+      scenario: 'vip-user',
+      refine: (obj) => ({
+        label: `${obj.role}-${obj.level}`,
+      }),
+    }) as { role: string; level: number; label: string }
+    expect(result.label).toBe('user-2')
+  })
+
+  it('refine sees both options.overrides and scenario overrides', () => {
+    const schema = z.object({ role: z.string(), region: z.string(), label: z.string() })
+    defineScenario('admin', { role: 'admin' })
+    const result = generate(schema, {
+      scenario: 'admin',
+      overrides: { region: 'us-east' },
+      refine: (obj) => ({
+        label: `${obj.role}-${obj.region}`,
+      }),
+    }) as { role: string; region: string; label: string }
+    expect(result.label).toBe('admin-us-east')
+  })
+
+  it('scenario + refine — refine runs exactly once', () => {
+    const schema = z.object({ name: z.string() })
+    let callCount = 0
+    defineScenario('simple', { name: 'fixed' })
+    generate(schema, {
+      scenario: 'simple',
+      refine: () => {
+        callCount++
+        return {}
+      },
+    })
+    expect(callCount).toBe(1)
+  })
+
+  it('scenario without refine still works (no regression)', () => {
+    const schema = z.object({ role: z.string() })
+    defineScenario('reader', { role: 'reader' })
+    const result = generate(schema, { scenario: 'reader' }) as { role: string }
+    expect(result.role).toBe('reader')
+  })
+
+  it('inheriting scenario without refine still works (no regression)', () => {
+    const schema = z.object({ role: z.string(), active: z.boolean() })
+    defineScenario('base', { role: 'user' })
+    defineScenario('extended', { extends: 'base', active: true })
+    const result = generate(schema, { scenario: 'extended' }) as {
+      role: string
+      active: boolean
+    }
+    expect(result.role).toBe('user')
+    expect(result.active).toBe(true)
+  })
+})
