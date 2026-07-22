@@ -14,35 +14,77 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Need full history for changesets tagging / comparison
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: npm
+          registry-url: https://registry.npmjs.org
+
       - run: npm ci
-      - name: Setup npm auth
-        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+
       - name: Check for pending changesets
-        id: check
+        id: changesets
         run: |
-          if ls .changeset/*.md 2>/dev/null; then
+          # README.md lives in .changeset/ and must not count as a pending release
+          if find .changeset -maxdepth 1 -type f -name '*.md' ! -name 'README.md' | grep -q .; then
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
+
       - name: Consume changesets and bump versions
-        if: steps.check.outputs.found == 'true'
+        if: steps.changesets.outputs.found == 'true'
         run: npx changeset version
+
+      - name: Check for packages needing publish
+        id: publish
+        run: |
+          node <<'EOF'
+          const { execSync } = require('node:child_process')
+          const { appendFileSync } = require('node:fs')
+          const { getPackages } = require('@manypkg/get-packages')
+
+          ;(async () => {
+            const { packages } = await getPackages(process.cwd())
+            let needed = false
+
+            for (const pkg of packages) {
+              if (pkg.packageJson.private) continue
+              const { name, version } = pkg.packageJson
+              try {
+                execSync(`npm view ${name}@${version} version`, { stdio: 'pipe' })
+                console.log(`${name}@${version} already on npm`)
+              } catch {
+                console.log(`${name}@${version} needs publish`)
+                needed = true
+              }
+            }
+
+            appendFileSync(process.env.GITHUB_OUTPUT, `needed=${needed}\n`)
+          })()
+          EOF
+
       - name: Build
-        if: steps.check.outputs.found == 'true'
+        if: steps.changesets.outputs.found == 'true' || steps.publish.outputs.needed == 'true'
         run: npm run build --workspaces --include-workspace-root
+
       - name: Publish to npm
-        if: steps.check.outputs.found == 'true'
+        if: steps.changesets.outputs.found == 'true' || steps.publish.outputs.needed == 'true'
         run: npx changeset publish
-      - name: Commit version bumps to master
-        if: steps.check.outputs.found == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
+
+      - name: Commit version bumps and push tags
+        if: steps.changesets.outputs.found == 'true' || steps.publish.outputs.needed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
           git diff --cached --quiet || git commit -m "chore: release [skip ci]"
-          git push origin master
+          # Push commits and any tags created by changeset publish
+          git push origin HEAD:master --follow-tags
