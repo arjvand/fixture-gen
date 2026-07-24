@@ -1,0 +1,41 @@
+{
+  "name": "@fixture-gen/playwright",
+  "version": "0.1.0",
+  "description": "Playwright plugin for fixture-gen — schema fixtures via test.extend.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["fixture-gen", "playwright", "test-fixtures", "deterministic", "testing", "e2e"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arjvand/fixture-gen.git"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fixture-gen": "^1.4.0"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.40.0"
+  }
+}

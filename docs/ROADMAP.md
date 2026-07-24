@@ -25,7 +25,7 @@ This document breaks the build of `fixture-gen` into ordered, dependency-correct
 
 Legend: 🔵 Planned · 🟡 In progress · 🟢 Done
 
-**Current status:** Phases 0–10 are complete and published as `fixture-gen@1.3.2`. Phase 11 in progress — `@fixture-gen/vitest` plugin and monorepo setup complete.
+**Current status:** Phases 0–10 are complete and published as `fixture-gen@1.4.x`. Phase 11 in progress — `@fixture-gen/vitest`, `@fixture-gen/jest`, and `@fixture-gen/playwright` shipped; DB adapter remaining.
 
 ---
 
@@ -272,10 +272,10 @@ Items below are tracked here before they are promoted into a numbered phase. Onc
 
 - [x] Monorepo setup: `packages/` with shared `tsconfig` and changesets for independent versioning
 - [x] `@fixture-gen/vitest` — `fixtureFactory(schema, opts)` returns a Vitest `beforeEach`-compatible factory with automatic seed reset per test
-- [ ] `@fixture-gen/jest` — same pattern, Jest lifecycle hooks
-- [ ] `@fixture-gen/playwright` — Playwright fixtures integration: `test.extend({ user: fixtureFactory(UserSchema) })`
+- [x] `@fixture-gen/jest` — same pattern, Jest lifecycle hooks
+- [x] `@fixture-gen/playwright` — Playwright fixtures integration: `test.extend({ user: fixtureFactory(UserSchema) })`
 - [ ] `@fixture-gen/db` — `seedDatabase(orm, relationalFixture)` adapter with Prisma and Drizzle targets
-- [ ] Each plugin has its own README and a working example in `examples/`
+- [x] Each plugin has its own README and a working example in `examples/` (DB adapter still pending)
 
 **Exit criteria:** A Vitest test can import `{ fixtureFactory } from '@fixture-gen/vitest'` and receive a fresh seeded fixture per test; the Prisma DB adapter can seed a test database from `generateRelational` output.
 

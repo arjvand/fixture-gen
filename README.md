@@ -48,9 +48,10 @@ Built on Standard Schema, it works with Zod, Valibot, ArkType, and TypeBox throu
 **Ecosystem plugins:**
 - **`@fixture-gen/vitest`** — `fixtureFactory` + `autoReset` for Vitest ([npm](https://www.npmjs.com/package/@fixture-gen/vitest))
 - **`@fixture-gen/jest`** — `fixtureFactory` + `autoReset` for Jest ([npm](https://www.npmjs.com/package/@fixture-gen/jest))
+- **`@fixture-gen/playwright`** — `fixtureFactory` / `factoryFixture` for Playwright `test.extend`
 
 **Planned** (see [`docs/ROADMAP.md`](docs/ROADMAP.md)):
-- `@fixture-gen/playwright`, `@fixture-gen/db` (Prisma + Drizzle)
+- `@fixture-gen/db` (Prisma + Drizzle)
 
 ## Ecosystem
 
@@ -104,6 +105,33 @@ test('creates a valid user', () => {
   expect(u.name).toBeTypeOf('string')
 })
 ```
+
+### `@fixture-gen/playwright`
+
+```bash
+npm install --save-dev @fixture-gen/playwright
+```
+
+> Requires `@playwright/test >= 1.40.0` as a peer dependency.
+
+Playwright uses `test.extend` fixtures rather than `beforeEach` factories:
+
+```ts
+import { test as base } from '@playwright/test'
+import { fixtureFactory, factoryFixture } from '@fixture-gen/playwright'
+
+export const test = base.extend({
+  user: fixtureFactory(UserSchema, { seed: 42 }),
+  // multi-value factory (fresh counter every test):
+  makeUser: factoryFixture(UserSchema, { seed: 1 }),
+})
+
+test('shows profile', async ({ user, page }) => {
+  await page.goto(`/users/${user.id}`)
+})
+```
+
+Pass `{ isolateWorkers: true }` to mix `testInfo.workerIndex` into the seed so parallel workers stay deterministic but non-colliding.
 
 ### API
 
