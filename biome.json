@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["dist", "coverage", ".antigravitycli"]
+    "ignore": ["dist", "coverage", ".antigravitycli", "website"]
   },
   "organizeImports": {
     "enabled": true

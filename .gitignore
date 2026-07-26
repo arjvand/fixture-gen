@@ -7,6 +7,10 @@ coverage
 .vscode
 *.tsbuildinfo
 
+# VitePress
+website/.vitepress/dist
+website/.vitepress/cache
+
 # Local agent/CLI tooling
 .antigravitycli
 .claude

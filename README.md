@@ -5,7 +5,10 @@
 [![npm version](https://img.shields.io/npm/v/fixture-gen.svg)](https://www.npmjs.com/package/fixture-gen)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/fixture-gen)](https://bundlephobia.com/package/fixture-gen)
 [![CI](https://img.shields.io/github/actions/workflow/status/arjvand/fixture-gen/ci.yml)](https://github.com/arjvand/fixture-gen/actions)
+[![docs](https://img.shields.io/badge/docs-arjvand.github.io-0d9488)](https://arjvand.github.io/fixture-gen/)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
+
+**Docs:** [https://arjvand.github.io/fixture-gen/](https://arjvand.github.io/fixture-gen/)
 
 Make tests easier to trust: point `fixture-gen` at a schema and get reproducible data that already satisfies it—no hand-written factories, no adapter code.
 
