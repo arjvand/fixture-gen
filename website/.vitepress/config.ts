@@ -9,6 +9,12 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
 
+  // Include base path in hostname: VitePress does not prepend `base` to sitemap URLs.
+  // Trailing slash is required so relative page paths resolve under /fixture-gen/.
+  sitemap: {
+    hostname: 'https://arjvand.github.io/fixture-gen/',
+  },
+
   head: [
     ['link', { rel: 'icon', href: '/fixture-gen/logo.png', type: 'image/png' }],
     ['meta', { name: 'theme-color', content: '#0d9488' }],
