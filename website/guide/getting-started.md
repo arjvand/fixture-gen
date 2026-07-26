@@ -1,6 +1,12 @@
 # Getting started
 
-Make tests easier to trust: point `fixture-gen` at a schema and get reproducible data that already satisfies it — no hand-written factories, no adapter code.
+Your schemas already describe valid data. Point `fixture-gen` at them and get reproducible fixtures that satisfy the same rules — no hand-written factories, no adapter code.
+
+## 30-second path
+
+1. Install: `npm install -D fixture-gen`
+2. Call `generate(schema, { seed: 42 })`
+3. Use the result in a test, story, or handler
 
 ## Before / after
 
@@ -54,7 +60,7 @@ const User = z.object({
 const user = generate(User, { seed: 42 })
 ```
 
-Because `fixture-gen` only depends on the Standard Schema interface, the **exact same call** works with any compliant validator:
+The **same call** works with any supported validator — no per-library adapter:
 
 ::: code-group
 
@@ -146,6 +152,12 @@ export const Admin = {
   },
 }
 ```
+
+## You're ready when…
+
+- You can generate a fixture with an explicit `seed`
+- You can pin a field with `overrides` when a test needs a fixed value
+- You know which [ecosystem plugin](/ecosystem/) matches your runner (if any)
 
 ## Next steps
 

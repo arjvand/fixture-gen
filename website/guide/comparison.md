@@ -2,6 +2,8 @@
 
 How `fixture-gen` stacks up against common alternatives.
 
+If you already validate with Zod, Valibot, ArkType, TypeBox, or JSON Schema, `fixture-gen` turns those schemas into deterministic fixtures. Faker fills free-form data; fast-check explores properties; Zod-only mockers stay inside one ecosystem.
+
 | | **fixture-gen** | `zod-fixture` / `@anatine/zod-mock` | `faker.js` | `fast-check` | `test-data-bot` |
 | --- | :---: | :---: | :---: | :---: | :---: |
 | Schema-agnostic | ✅ | ❌ (Zod only) | ➖ (no schema layer) | ❌ | ❌ |
@@ -18,10 +20,10 @@ How `fixture-gen` stacks up against common alternatives.
 
 ## When to use what
 
-- **fixture-gen** — You already have Zod/Valibot/ArkType/TypeBox (or JSON Schema) and want schema-valid, deterministic fixtures with minimal glue.
-- **faker.js** — You need realistic free-form data without a schema, or to fill fields that aren't in a validator.
-- **fast-check** — You want property-based testing with shrinking, not fixed fixtures for unit/UI tests.
-- **zod-fixture / zod-mock** — You're all-in on Zod only and don't need relational generation, scenarios, or a CLI.
+- **fixture-gen** — you already have Zod/Valibot/ArkType/TypeBox (or JSON Schema/OpenAPI) and want schema-valid, deterministic fixtures with minimal glue.
+- **faker.js** — you need realistic free-form data without a schema, or to fill fields that are not in a validator.
+- **fast-check** — you want property-based testing with shrinking, not fixed fixtures for unit/UI tests.
+- **zod-fixture / zod-mock** — you are all-in on Zod only and do not need relational generation, scenarios, or a CLI.
 
 ## Planned
 

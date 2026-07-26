@@ -1,6 +1,6 @@
 # @fixture-gen/vitest
 
-Thin **Vitest** integration — deterministic, schema-agnostic test fixtures with automatic seed reset per test.
+Use `fixtureFactory` in Vitest so each test starts from the same seed — deterministic, schema-valid fixtures with automatic reset via `autoReset`.
 
 ## Installation
 

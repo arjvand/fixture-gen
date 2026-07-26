@@ -2,6 +2,8 @@
 
 The same `seed` always yields identical output — ideal for snapshot tests and reproducible CI.
 
+**When to use this:** any test, story, or pipeline where a changing fixture would cause flaky snapshots, hard-to-reproduce failures, or “works on my machine” noise. Prefer an explicit seed in tests; if you omit it, values are not guaranteed to match across runs.
+
 ## Seeds
 
 ```ts

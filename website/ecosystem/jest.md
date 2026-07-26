@@ -1,6 +1,6 @@
 # @fixture-gen/jest
 
-Thin **Jest** integration — deterministic, schema-agnostic test fixtures with automatic seed reset per test.
+Use `fixtureFactory` in Jest so each test starts from the same seed — deterministic, schema-valid fixtures with automatic reset via `autoReset`.
 
 ## Installation
 

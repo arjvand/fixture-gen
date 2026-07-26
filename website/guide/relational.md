@@ -1,6 +1,8 @@
 # Relational generation
 
-`generateRelational` builds multiple record sets at once and wires child records to **real** parent keys, so foreign keys actually resolve.
+Seed multiple tables at once without broken foreign keys. `generateRelational` builds record sets together and wires child rows to **real** parent keys.
+
+**When to use this:** integration tests, DB seeds, or API fixtures where `posts.userId` must actually exist in `users`.
 
 ## Basic example
 

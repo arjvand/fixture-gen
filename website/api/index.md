@@ -1,6 +1,6 @@
 # API Reference
 
-Public surface of `fixture-gen`.
+Public surface of `fixture-gen` — generate single fixtures, batches, and related record sets from your schemas.
 
 ## Core generation
 

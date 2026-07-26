@@ -1,6 +1,8 @@
 # Scenarios
 
-Pass `scenario` to any generation entry point to get named, intent-bearing test data instead of anonymous random values.
+Pass `scenario` to any generation entry point to get **named shapes for common test intents** — happy path, empty UI, boundaries, invalid input — instead of anonymous random values.
+
+**When to use this:** you want the same test harness to cover multiple behaviors (empty list, min/max edges, validation errors) without hand-building each case.
 
 ```ts
 import { generate, generateMany, generateRelational, defineScenario } from 'fixture-gen'

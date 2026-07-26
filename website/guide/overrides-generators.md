@@ -1,6 +1,8 @@
 # Overrides & custom generators
 
-Three layers let you control generated values without abandoning schema-driven fixtures.
+Pin the fields your test cares about; generate the rest. Three layers control values without abandoning schema-driven fixtures.
+
+**When to use this:** a test needs a fixed `role: 'admin'`, a computed slug, or a project-wide rule for certain field kinds.
 
 ## Priority (highest → lowest)
 

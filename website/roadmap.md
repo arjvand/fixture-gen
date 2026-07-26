@@ -1,6 +1,6 @@
 # Roadmap
 
-High-level status of the `fixture-gen` project. Full phase checklists live in the [package ROADMAP](https://github.com/arjvand/fixture-gen/blob/main/docs/ROADMAP.md).
+What has shipped and what is next for users of `fixture-gen`. Full phase checklists live in the [package ROADMAP](https://github.com/arjvand/fixture-gen/blob/main/docs/ROADMAP.md).
 
 ## Overview
 

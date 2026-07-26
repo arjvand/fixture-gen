@@ -1,8 +1,10 @@
 # Examples
 
-Curated patterns from real test and product workflows. All examples use the same core API — swap validators freely.
+Curated patterns from real test and product workflows. Each example uses the same core API — swap validators freely.
 
-## React component test (Vitest + Testing Library)
+## Component test without fixture drift
+
+**Use when:** rendering UI with schema-shaped props and you want each test to start from the same seed.
 
 ```ts
 import { render, screen } from '@testing-library/react'
@@ -25,7 +27,11 @@ test('each test starts with seed 1', () => {
 })
 ```
 
-## API handler test
+See also: [Vitest plugin](/ecosystem/vitest)
+
+## API payload that validates
+
+**Use when:** calling a handler or client that expects a schema-valid body.
 
 ```ts
 import { generate } from 'fixture-gen'
@@ -39,7 +45,9 @@ test('creates a user', async () => {
 })
 ```
 
-## Storybook story
+## Storybook args that stay stable
+
+**Use when:** you want visual baselines that do not thrash between builds.
 
 ```ts
 import { generate } from 'fixture-gen'
@@ -59,7 +67,9 @@ export const Admin = {
 }
 ```
 
-## Relational users & posts
+## Users & posts with real foreign keys
+
+**Use when:** seeding related tables and every child FK must point at a real parent.
 
 ```ts
 import { generateRelational } from 'fixture-gen'
@@ -88,7 +98,11 @@ const { users, posts } = generateRelational(
 // Every post.userId is a real users[].id
 ```
 
+See also: [Relational generation](/guide/relational)
+
 ## Scenario matrix for edge coverage
+
+**Use when:** you want one test loop over happy-path, empty, boundary, and invalid shapes.
 
 ```ts
 import { generate } from 'fixture-gen'
@@ -110,7 +124,11 @@ for (const scenario of scenarios) {
 }
 ```
 
+See also: [Scenarios](/guide/scenarios)
+
 ## Unique emails across a batch
+
+**Use when:** `generateMany` would otherwise collide on unique columns.
 
 ```ts
 import { generateMany } from 'fixture-gen'
@@ -121,7 +139,11 @@ const users = generateMany(UserSchema, 1000, {
 })
 ```
 
+See also: [Advanced constraints](/guide/advanced-constraints)
+
 ## Playwright e2e fixture
+
+**Use when:** extending Playwright tests with schema-valid user data per worker.
 
 ```ts
 import { test as base } from '@playwright/test'
@@ -136,7 +158,11 @@ test('profile page', async ({ user, page }) => {
 })
 ```
 
+See also: [Playwright plugin](/ecosystem/playwright)
+
 ## OpenAPI contract fixture
+
+**Use when:** you have an OpenAPI spec and no TypeScript validator package in the test path.
 
 ```ts
 import { generateFromOpenApi } from 'fixture-gen'
@@ -144,6 +170,8 @@ import spec from './openapi.json'
 
 const user = generateFromOpenApi(spec, 'User', { seed: 42 })
 ```
+
+See also: [JSON Schema & OpenAPI](/guide/json-schema-openapi)
 
 ## Repo examples
 

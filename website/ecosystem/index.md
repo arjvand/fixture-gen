@@ -1,6 +1,6 @@
 # Ecosystem
 
-Thin adapter packages that integrate `fixture-gen` into popular test runners. They add no heavy runtime dependencies — just the tools you already use.
+Drop schema-valid factories into the test runner you already use. These thin plugins wrap `fixture-gen` for Vitest, Jest, and Playwright — no heavy runtime dependencies beyond the tools you already have.
 
 | Package | Integrates with | Highlights |
 |---------|-----------------|------------|

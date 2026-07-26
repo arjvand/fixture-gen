@@ -1,6 +1,8 @@
 # Advanced constraints
 
-Uniqueness guarantees, cross-field refinement hooks, and business-rule hooks for relational generation.
+When uniqueness or cross-field rules matter — unique emails across a batch, multi-field invariants, or business rules that span related tables.
+
+**When to use this:** DB-like uniqueness, `endDate >= startDate` style refine logic, or free-plan invoices that must have `amount: 0` after relational generation.
 
 ---
 

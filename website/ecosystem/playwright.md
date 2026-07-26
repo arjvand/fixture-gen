@@ -1,6 +1,6 @@
 # @fixture-gen/playwright
 
-Thin **Playwright** integration — deterministic, schema-agnostic fixtures via `test.extend`.
+Extend Playwright tests with schema-valid fixtures via `test.extend` — deterministic data per test, with optional worker isolation for parallel runs.
 
 ## Installation
 

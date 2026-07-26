@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: fixture-gen
-  text: Schema-valid fixtures, every time
-  tagline: Generate deterministic test data from your existing TypeScript validators — Zod, Valibot, ArkType, TypeBox, and more. No hand-written factories. No adapter code.
+  text: Test data that always matches your schema
+  tagline: Generate deterministic fixtures from your existing validators — Zod, Valibot, ArkType, TypeBox, JSON Schema, and OpenAPI. Same seed, same data. No hand-written factories.
   image:
     src: /logo.png
     alt: fixture-gen
@@ -15,29 +15,26 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/arjvand/fixture-gen
-    - theme: alt
-      text: npm
-      link: https://www.npmjs.com/package/fixture-gen
 
 features:
   - icon: 🔌
-    title: Standard Schema native
-    details: Works with Zod, Valibot, and ArkType through the shared ~standard interface, and understands TypeBox directly. Point it at your existing schemas.
+    title: Works with your validators
+    details: Same generate() call for Zod, Valibot, ArkType, and TypeBox. No adapters for you to write — point it at the schemas you already have.
   - icon: 🎲
-    title: Seeded determinism
-    details: Pass a seed and the same schema always produces the same data — stable snapshots and assertions across runs and machines.
+    title: Stable across CI runs
+    details: Pass a seed and every machine produces the same fixture. Snapshots and assertions stop thrashing between runs.
   - icon: 🔗
-    title: Relational generation
-    details: Generate connected record sets where child rows reference real parent keys, so foreign keys actually resolve.
+    title: Foreign keys that resolve
+    details: Generate related tables where every child FK points at a real parent row — not a random UUID that never exists.
   - icon: 🎭
-    title: Scenario-first
-    details: Named intent-bearing cases — happy-path, empty-state, boundary-min, boundary-max, invalid, missing-subtree — plus defineScenario for your own.
+    title: Named test scenarios
+    details: happy-path, empty-state, boundary-min, boundary-max, invalid, missing-subtree — or defineScenario for your own cases.
   - icon: 🔒
-    title: Advanced constraints
-    details: Cross-record uniqueness, refine hooks for multi-field invariants, and business-rule hooks across generateRelational.
+    title: Uniqueness & business rules
+    details: Unique emails across a batch, refine hooks for multi-field invariants, and rules that span generateRelational tables.
   - icon: 🪶
-    title: Minimal runtime
-    details: Pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge runtimes. Fully typed output.
+    title: Tiny, typed, portable
+    details: Pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge. Fully typed output from your schema.
 ---
 
 ## Quick taste
@@ -63,6 +60,50 @@ const user = generate(User, { seed: 42 })
 ```
 
 Same call works with Valibot, ArkType, and TypeBox — no adapters.
+
+```bash
+npm install -D fixture-gen
+```
+
+## The problem it solves
+
+Hand-written fixtures go stale the moment the schema changes. Faker ignores your constraints. Custom factories are another surface to maintain — and they still drift.
+
+Your schemas already describe what valid data looks like. `fixture-gen` turns them into fixtures that stay valid and reproducible.
+
+## Before / after
+
+```ts
+// Before: brittle manual fixture that drifts from the schema
+const user = {
+  id: '2b8f1c6e-6f90-4c52-9c83-0d9f2f4cf5c9',
+  name: 'John',
+  email: 'john@example.com',
+  role: 'admin',
+  profile: { avatarUrl: null }, // schema now requires a string
+}
+
+// After: schema-derived fixture in one line
+const user = generate(UserSchema, { seed: 42, overrides: { role: 'admin' } })
+```
+
+## When to use what
+
+- **fixture-gen** — you already have a schema and want validating, deterministic fixtures
+- **Faker alone** — free-form realistic strings with no schema to satisfy
+- **fast-check** — property-based testing with shrinking, not fixed unit/UI fixtures
+
+See the full [comparison](/guide/comparison).
+
+## Works with your test runner
+
+| Package | Integrates with |
+|---------|-----------------|
+| [`@fixture-gen/vitest`](/ecosystem/vitest) | Vitest |
+| [`@fixture-gen/jest`](/ecosystem/jest) | Jest |
+| [`@fixture-gen/playwright`](/ecosystem/playwright) | Playwright |
+
+## Next step
 
 ```bash
 npm install -D fixture-gen

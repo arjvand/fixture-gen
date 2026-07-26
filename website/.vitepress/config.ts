@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'fixture-gen',
   description:
-    'Schema-agnostic, deterministic test fixtures for any Standard Schema validator — Zod, Valibot, ArkType, TypeBox, and more.',
+    'Generate deterministic, schema-valid test fixtures from Zod, Valibot, ArkType, TypeBox, JSON Schema, and OpenAPI. Zero runtime dependencies.',
   base: '/fixture-gen/',
   lang: 'en-US',
   cleanUrls: true,
@@ -19,13 +19,19 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/fixture-gen/logo.png', type: 'image/png' }],
     ['meta', { name: 'theme-color', content: '#0d9488' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'fixture-gen' }],
+    [
+      'meta',
+      {
+        property: 'og:title',
+        content: 'fixture-gen — schema-valid test fixtures',
+      },
+    ],
     [
       'meta',
       {
         property: 'og:description',
         content:
-          'Schema-agnostic, deterministic test fixtures for any Standard Schema validator.',
+          'Generate deterministic, schema-valid test fixtures from Zod, Valibot, ArkType, TypeBox, JSON Schema, and OpenAPI.',
       },
     ],
     [

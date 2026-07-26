@@ -1,5 +1,7 @@
 # Install
 
+Add `fixture-gen` as a dev dependency, then generate fixtures in tests, stories, and scripts.
+
 ## Package managers
 
 ```bash

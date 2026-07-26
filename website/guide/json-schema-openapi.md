@@ -1,6 +1,8 @@
 # JSON Schema & OpenAPI
 
-`fixture-gen` can generate fixtures directly from JSON Schema objects and OpenAPI 3.x specs — no validator adapter needed.
+Generate fixtures directly from JSON Schema objects and OpenAPI 3.x specs — **no Zod, Valibot, or other validator package required**. Ideal for contract-first APIs and shared OpenAPI specs.
+
+**When to use this:** the source of truth is a JSON Schema or OpenAPI document rather than a TypeScript validator.
 
 ## `generateFromJsonSchema`
 
