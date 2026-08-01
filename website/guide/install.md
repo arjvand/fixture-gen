@@ -1,3 +1,7 @@
+---
+description: Install fixture-gen for Node.js, Bun, Deno, and edge runtimes. Includes a CLI binary and ecosystem plugins for Vitest, Jest, and Playwright.
+---
+
 # Install
 
 Add `fixture-gen` as a dev dependency, then generate fixtures in tests, stories, and scripts.

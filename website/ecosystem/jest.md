@@ -1,3 +1,7 @@
+---
+description: Use fixtureFactory and autoReset with Jest for deterministic, schema-valid test fixtures that reset to the same seed before each test.
+---
+
 # @fixture-gen/jest
 
 Use `fixtureFactory` in Jest so each test starts from the same seed — deterministic, schema-valid fixtures with automatic reset via `autoReset`.

@@ -1,3 +1,7 @@
+---
+description: Generate fixtures directly from JSON Schema and OpenAPI 3.x specs — no validator package required. Includes generateFromJsonSchema, generateFromOpenApi, and toJsonSchema.
+---
+
 # JSON Schema & OpenAPI
 
 Generate fixtures directly from JSON Schema objects and OpenAPI 3.x specs — **no Zod, Valibot, or other validator package required**. Ideal for contract-first APIs and shared OpenAPI specs.

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { seoHead } from './seo'
 
 export default defineConfig({
   title: 'fixture-gen',
@@ -18,31 +19,12 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/fixture-gen/logo.png', type: 'image/png' }],
     ['meta', { name: 'theme-color', content: '#0d9488' }],
-    ['meta', { property: 'og:type', content: 'website' }],
-    [
-      'meta',
-      {
-        property: 'og:title',
-        content: 'fixture-gen — schema-valid test fixtures',
-      },
-    ],
-    [
-      'meta',
-      {
-        property: 'og:description',
-        content:
-          'Generate deterministic, schema-valid test fixtures from Zod, Valibot, ArkType, TypeBox, JSON Schema, and OpenAPI.',
-      },
-    ],
-    [
-      'meta',
-      {
-        property: 'og:image',
-        content: 'https://arjvand.github.io/fixture-gen/logo.png',
-      },
-    ],
-    ['meta', { name: 'twitter:card', content: 'summary' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
   ],
+
+  transformHead(context) {
+    context.head.push(...seoHead(context))
+  },
 
   themeConfig: {
     logo: '/logo.png',

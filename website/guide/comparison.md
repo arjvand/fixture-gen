@@ -1,3 +1,7 @@
+---
+description: How fixture-gen compares to faker.js, fast-check, zod-fixture, and test-data-bot — schema-agnostic, seeded determinism, relational generation, and a CLI.
+---
+
 # Comparison
 
 How `fixture-gen` stacks up against common alternatives.

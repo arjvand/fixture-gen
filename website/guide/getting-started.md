@@ -1,3 +1,7 @@
+---
+description: Create schema-valid test fixtures in minutes — install fixture-gen, call generate(schema, { seed }), and get reproducible data for Vitest, Jest, and Playwright tests.
+---
+
 # Getting started
 
 Your schemas already describe valid data. Point `fixture-gen` at them and get reproducible fixtures that satisfy the same rules — no hand-written factories, no adapter code.

@@ -1,3 +1,7 @@
+---
+description: Use fixtureFactory and autoReset with Vitest for deterministic, schema-valid test fixtures that reset to the same seed before each test.
+---
+
 # @fixture-gen/vitest
 
 Use `fixtureFactory` in Vitest so each test starts from the same seed — deterministic, schema-valid fixtures with automatic reset via `autoReset`.

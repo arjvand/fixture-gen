@@ -1,3 +1,7 @@
+---
+description: The fixture-gen CLI generates fixtures, saves snapshots, diffs engine output, and watches schema changes — catch schema drift in CI.
+---
+
 # CLI
 
 Catch schema drift in CI before tests go green on stale fixtures. The CLI generates fixtures, saves snapshots, diffs output, and watches schema changes.

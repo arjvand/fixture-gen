@@ -1,3 +1,7 @@
+---
+description: Unique arrays, cross-record uniqueness in generateMany, refine hooks for multi-field invariants, and business rules that span related tables.
+---
+
 # Advanced constraints
 
 When uniqueness or cross-field rules matter — unique emails across a batch, multi-field invariants, or business rules that span related tables.

@@ -1,3 +1,7 @@
+---
+description: Curated fixture-gen examples — component tests without fixture drift, API handler tests, Storybook stories, and more real-world patterns.
+---
+
 # Examples
 
 Curated patterns from real test and product workflows. Each example uses the same core API — swap validators freely.

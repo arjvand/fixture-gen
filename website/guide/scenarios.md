@@ -1,3 +1,7 @@
+---
+description: Named test scenarios — happy-path, empty-state, boundary-min, boundary-max, invalid, missing-subtree — plus user-defined scenarios via defineScenario.
+---
+
 # Scenarios
 
 Pass `scenario` to any generation entry point to get **named shapes for common test intents** — happy path, empty UI, boundaries, invalid input — instead of anonymous random values.

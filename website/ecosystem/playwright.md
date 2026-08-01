@@ -1,3 +1,7 @@
+---
+description: Extend Playwright tests with schema-valid fixtures via test.extend — deterministic data per test, with worker isolation for parallel runs.
+---
+
 # @fixture-gen/playwright
 
 Extend Playwright tests with schema-valid fixtures via `test.extend` — deterministic data per test, with optional worker isolation for parallel runs.

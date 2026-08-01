@@ -1,3 +1,7 @@
+---
+description: The fixture-gen roadmap — what has shipped across 11 phases and what is next, including ecosystem plugins and DB adapters.
+---
+
 # Roadmap
 
 What has shipped and what is next for users of `fixture-gen`. Full phase checklists live in the [package ROADMAP](https://github.com/arjvand/fixture-gen/blob/main/docs/ROADMAP.md).

@@ -1,3 +1,7 @@
+---
+description: API reference for fixture-gen — generate, generateMany, generateRelational, scenarios, overrides, generators, refine, and utility exports.
+---
+
 # API Reference
 
 Public surface of `fixture-gen` — generate single fixtures, batches, and related record sets from your schemas.

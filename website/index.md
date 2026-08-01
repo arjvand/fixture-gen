@@ -1,6 +1,8 @@
 ---
 layout: home
 
+description: Generate deterministic, schema-valid test fixtures from Zod, Valibot, ArkType, TypeBox, JSON Schema, and OpenAPI. Zero runtime dependencies.
+
 hero:
   name: fixture-gen
   text: Test data that always matches your schema

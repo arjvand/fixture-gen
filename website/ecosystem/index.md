@@ -1,3 +1,7 @@
+---
+description: Ecosystem plugins that drop schema-valid factories into your test runner — @fixture-gen/vitest, @fixture-gen/jest, and @fixture-gen/playwright.
+---
+
 # Ecosystem
 
 Drop schema-valid factories into the test runner you already use. These thin plugins wrap `fixture-gen` for Vitest, Jest, and Playwright — no heavy runtime dependencies beyond the tools you already have.

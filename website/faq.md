@@ -1,3 +1,7 @@
+---
+description: Frequently asked questions about fixture-gen — Faker vs. schema-derived fixtures, differences from zod-mock, fast-check comparison, and validator support.
+---
+
 # FAQ
 
 ## Why not just use Faker or hand-written factories?

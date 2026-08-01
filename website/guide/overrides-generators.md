@@ -1,3 +1,7 @@
+---
+description: Pin fields with overrides, compute values with field generators, or hook every schema node — three layers of control over deterministic fixtures.
+---
+
 # Overrides & custom generators
 
 Pin the fields your test cares about; generate the rest. Three layers control values without abandoning schema-driven fixtures.

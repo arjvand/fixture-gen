@@ -1,3 +1,7 @@
+---
+description: The same seed always produces identical fixtures, so snapshot tests and CI runs stay stable. Seeded, reproducible fixture generation explained.
+---
+
 # Deterministic generation
 
 The same `seed` always yields identical output — ideal for snapshot tests and reproducible CI.

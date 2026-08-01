@@ -1,3 +1,7 @@
+---
+description: Generate multiple tables at once with generateRelational — foreign keys always resolve to real parent rows, plus business-rule hooks for cross-table invariants.
+---
+
 # Relational generation
 
 Seed multiple tables at once without broken foreign keys. `generateRelational` builds record sets together and wires child rows to **real** parent keys.
