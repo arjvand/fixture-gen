@@ -13,10 +13,10 @@ The same `seed` always yields identical output — ideal for snapshot tests and 
 ```ts
 const a = generate(User, { seed: 7 })
 const b = generate(User, { seed: 7 })
-// a deep-equals b  ✅
+// a deep-equals b  ✓
 
 const c = generate(User, { seed: 8 })
-// c differs from a ✅
+// c differs from a ✓
 ```
 
 When you omit `seed`, generation still works, but values are not guaranteed to match across runs. Prefer an explicit seed in tests.

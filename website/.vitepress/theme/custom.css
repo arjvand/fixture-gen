@@ -45,6 +45,27 @@
   box-shadow: 0 8px 24px rgba(13, 148, 136, 0.08);
 }
 
+.VPFeatures .icon {
+  color: var(--vp-c-brand-1);
+}
+
+/* Comparison table icons */
+.vp-doc table td svg {
+  vertical-align: middle;
+}
+
+.vp-doc table td .ok {
+  color: var(--vp-c-brand-1);
+}
+
+.vp-doc table td .no {
+  color: var(--vp-c-danger-1);
+}
+
+.vp-doc table td .maybe {
+  color: var(--vp-c-text-3);
+}
+
 /* Code block polish */
 .vp-doc div[class*='language-'] {
   border: 1px solid var(--vp-c-divider);

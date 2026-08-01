@@ -1,5 +1,7 @@
 ---
 layout: home
+title: fixture-gen — Deterministic test fixtures from your schema
+titleTemplate: false
 
 description: Generate deterministic, schema-valid test fixtures from Zod, Valibot, ArkType, TypeBox, JSON Schema, and OpenAPI. Zero runtime dependencies.
 
@@ -19,22 +21,28 @@ hero:
       link: https://github.com/arjvand/fixture-gen
 
 features:
-  - icon: 🔌
+  - icon: |
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M15 8V2"/><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M9 8V2"/></svg>
     title: Works with your validators
     details: Same generate() call for Zod, Valibot, ArkType, and TypeBox. No adapters for you to write — point it at the schemas you already have.
-  - icon: 🎲
+  - icon: |
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg>
     title: Stable across CI runs
     details: Pass a seed and every machine produces the same fixture. Snapshots and assertions stop thrashing between runs.
-  - icon: 🔗
+  - icon: |
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
     title: Foreign keys that resolve
     details: Generate related tables where every child FK points at a real parent row — not a random UUID that never exists.
-  - icon: 🎭
+  - icon: |
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10s3-3 3-8"/><path d="M22 10s-3-3-3-8"/><path d="M10 2c0 4.4-3.6 8-8 8"/><path d="M14 2c0 4.4 3.6 8 8 8"/><path d="M2 10s2 2 2 5"/><path d="M22 10s-2 2-2 5"/><path d="M8 15h8"/><path d="M2 22v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1"/><path d="M14 22v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1"/></svg>
     title: Named test scenarios
     details: happy-path, empty-state, boundary-min, boundary-max, invalid, missing-subtree — or defineScenario for your own cases.
-  - icon: 🔒
+  - icon: |
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
     title: Uniqueness & business rules
     details: Unique emails across a batch, refine hooks for multi-field invariants, and rules that span generateRelational tables.
-  - icon: 🪶
+  - icon: |
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.086 18.412A2 2 0 0112.67 19H5v-7.672a2 2 0 01.586-1.414L11.75 3.75a6 6 0 118.49 8.49z"/><path d="M16 8 2 22"/><path d="M17.488 15H9"/></svg>
     title: Tiny, typed, portable
     details: Pure TypeScript, zero binary dependencies. Runs on Node.js, Bun, Deno, and edge. Fully typed output from your schema.
 ---

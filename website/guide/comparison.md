@@ -10,17 +10,17 @@ If you already validate with Zod, Valibot, ArkType, TypeBox, or JSON Schema, `fi
 
 | | **fixture-gen** | `zod-fixture` / `@anatine/zod-mock` | `faker.js` | `fast-check` | `test-data-bot` |
 | --- | :---: | :---: | :---: | :---: | :---: |
-| Schema-agnostic | ✅ | ❌ (Zod only) | ➖ (no schema layer) | ❌ | ❌ |
-| Standard Schema native | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Seeded determinism | ✅ | ➖ varies | ✅ | ✅ | ❌ |
-| Relational / FK generation | ✅ | ❌ | ❌ (manual) | ❌ | ❌ |
-| Maps schema → mock automatically | ✅ | ✅ (Zod) | ❌ (write it yourself) | ❌ (write arbitraries) | ❌ (write factories) |
-| Field overrides | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Schema-agnostic | <IconCheck class="ok"/> | <IconX class="no"/> (Zod only) | <IconMinus class="maybe"/> (no schema layer) | <IconX class="no"/> | <IconX class="no"/> |
+| Standard Schema native | <IconCheck class="ok"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> |
+| Seeded determinism | <IconCheck class="ok"/> | <IconMinus class="maybe"/> varies | <IconCheck class="ok"/> | <IconCheck class="ok"/> | <IconX class="no"/> |
+| Relational / FK generation | <IconCheck class="ok"/> | <IconX class="no"/> | <IconX class="no"/> (manual) | <IconX class="no"/> | <IconX class="no"/> |
+| Maps schema → mock automatically | <IconCheck class="ok"/> | <IconCheck class="ok"/> (Zod) | <IconX class="no"/> (write it yourself) | <IconX class="no"/> (write arbitraries) | <IconX class="no"/> (write factories) |
+| Field overrides | <IconCheck class="ok"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> | <IconCheck class="ok"/> |
 | Runtime dependencies | none | Zod | none | none | none |
-| Named scenarios (happy-path, etc.) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Cross-record uniqueness / refine hooks | ✅ | ❌ | ❌ | ❌ | ❌ |
-| CLI + drift detection | ✅ | ❌ | ❌ | ❌ | ❌ |
-| JSON Schema / OpenAPI import-export | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Named scenarios (happy-path, etc.) | <IconCheck class="ok"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> |
+| Cross-record uniqueness / refine hooks | <IconCheck class="ok"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> |
+| CLI + drift detection | <IconCheck class="ok"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> |
+| JSON Schema / OpenAPI import-export | <IconCheck class="ok"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> | <IconX class="no"/> |
 
 ## When to use what
 

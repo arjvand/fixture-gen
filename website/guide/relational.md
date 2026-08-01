@@ -36,7 +36,7 @@ const { users, posts } = generateRelational(
   },
 )
 
-// posts.every(p => users.some(u => u.id === p.userId)) === true ✅
+// posts.every(p => users.some(u => u.id === p.userId)) === true ✓
 ```
 
 ## Options
